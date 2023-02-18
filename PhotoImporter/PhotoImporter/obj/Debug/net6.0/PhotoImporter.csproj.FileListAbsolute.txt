@@ -1,0 +1,15 @@
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.csproj.AssemblyReference.cache
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.GeneratedMSBuildEditorConfig.editorconfig
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.AssemblyInfoInputs.cache
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.AssemblyInfo.cs
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.csproj.CoreCompileInputs.cache
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/bin/Debug/net6.0/PhotoImporter
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/bin/Debug/net6.0/PhotoImporter.deps.json
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/bin/Debug/net6.0/PhotoImporter.runtimeconfig.json
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/bin/Debug/net6.0/PhotoImporter.dll
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/bin/Debug/net6.0/ref/PhotoImporter.dll
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/bin/Debug/net6.0/PhotoImporter.pdb
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.dll
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/ref/PhotoImporter.dll
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.pdb
+/home/jake/Projects/PhotoImporter/PhotoImporter/PhotoImporter/obj/Debug/net6.0/PhotoImporter.genruntimeconfig.cache
