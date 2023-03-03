@@ -13,6 +13,7 @@ public class MainTests {
     Mock<IConsoleWriter> _consoleWriter;
     Mock<IConfigReader> _configReader;
     Mock<IFilesystem> _filesystem;
+    Mock<IPhotoImporter> _photoImporter;
     
     List<string> _writeLineResults;
     
@@ -20,6 +21,7 @@ public class MainTests {
     ISetup<IConfigReader> _readConfig;
     ISetup<IConfigReader, bool> _configIsValid;
     ISetup<IFilesystem, bool> _fileExists;
+    ISetup<IPhotoImporter> _runJob;
 
     int _index;
 
@@ -37,13 +39,17 @@ public class MainTests {
 
         _filesystem = new Mock<IFilesystem>();
         _fileExists = _filesystem.Setup(x => x.FileExists(It.IsAny<string>()));
+
+        _photoImporter = new Mock<IPhotoImporter>();
+        _runJob = _photoImporter.Setup(x => x.RunJob());
         
         _index = 0;
 
         Program.InjectDependencies(
             _consoleWriter.Object,
             _configReader.Object,
-            _filesystem.Object
+            _filesystem.Object,
+            _photoImporter.Object
         );
     }
 
@@ -89,6 +95,17 @@ public class MainTests {
         main("--configFile", CONFIG_PATH);
 
         verifySingleMessage("Config file is not valid.");
+    }
+
+    [TestMethod]
+    public void Main_GoodConfig_JobStarted() {
+        _fileExists.Returns(true);
+        _configIsValid.Returns(true);
+        _runJob.Verifiable();
+
+        main("--configFile", CONFIG_PATH);
+
+        _photoImporter.Verify(x => x.RunJob(), Times.Once);
     }
 
     void testBadArguments(params string[] args)

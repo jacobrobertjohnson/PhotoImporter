@@ -5,15 +5,19 @@ namespace PhotoImporter {
         static IConfigReader _configReader = new ConfigReader();
         static IFilesystem _filesystem = new Filesystem();
         static Messenger? _messenger;
+        static IPhotoImporter _photoImporter = new PhotoImporter();
+
 
         public static void InjectDependencies(
             IConsoleWriter consoleWriter,
             IConfigReader configReader,
-            IFilesystem filesystem
+            IFilesystem filesystem,
+            IPhotoImporter photoImporter
         ) {
             _messenger = new Messenger(consoleWriter);
             _configReader = configReader;
             _filesystem = filesystem;
+            _photoImporter = photoImporter;
         }
 
         public static void Main(string[] args) {
@@ -28,6 +32,8 @@ namespace PhotoImporter {
 
                 if (!_configReader.ConfigIsValid)
                     _messenger?.ConfigFileNotValid();
+                else
+                    _photoImporter.RunJob();
             }
         }
     }
