@@ -12,11 +12,13 @@ public class MainTests {
 
     Mock<IConsoleWriter> _consoleWriter;
     Mock<IConfigReader> _configReader;
+    Mock<IFilesystem> _filesystem;
     
     List<string> _writeLineResults;
     
     ISetup<IConsoleWriter> _writeLine;
     ISetup<IConfigReader> _readConfig;
+    ISetup<IFilesystem, bool> _fileExists;
 
     int _index;
 
@@ -30,11 +32,15 @@ public class MainTests {
 
         _configReader = new Mock<IConfigReader>();
         _readConfig = _configReader.Setup(x => x.ReadConfig(It.IsAny<string>()));
+
+        _filesystem = new Mock<IFilesystem>();
+        _fileExists = _filesystem.Setup(x => x.FileExists(It.IsAny<string>()));
         
         _index = 0;
 
         Program.SetConsoleWriter(_consoleWriter.Object);
         Program.SetConfigReader(_configReader.Object);
+        Program.SetFilesystem(_filesystem.Object);
     }
 
     [TestMethod]
@@ -53,7 +59,18 @@ public class MainTests {
     }
 
     [TestMethod]
-    public void Main_ArgumentsGood_ConfigRead() {
+    public void Main_FileDoesntExist_MessageWritten() {
+        _fileExists.Returns(false);
+
+        main("--configFile", CONFIG_PATH);
+
+        Assert.AreEqual(1, _writeLineResults.Count);
+        Assert.AreEqual("Config file does not exist.", _writeLineResults[_index++]);
+    }
+
+    [TestMethod]
+    public void Main_FileExists_ConfigRead() {
+        _fileExists.Returns(true);
         _readConfig.Verifiable();
 
         main("--configFile", CONFIG_PATH);
