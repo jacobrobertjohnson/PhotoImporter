@@ -2,51 +2,33 @@
 
 namespace PhotoImporter {
     public class Program {
-        static IConsoleWriter _consoleWriter = new ConsoleWriter();
         static IConfigReader _configReader = new ConfigReader();
         static IFilesystem _filesystem = new Filesystem();
+        static Messenger? _messenger;
 
         public static void InjectDependencies(
             IConsoleWriter consoleWriter,
             IConfigReader configReader,
             IFilesystem filesystem
         ) {
-            _consoleWriter = consoleWriter;
+            _messenger = new Messenger(consoleWriter);
             _configReader = configReader;
             _filesystem = filesystem;
         }
 
         public static void Main(string[] args) {
-            string? configFilePath = getConfigFilePath(args);
+            string? configFilePath = Arguments.GetConfigFilePath(args);
 
             if (string.IsNullOrWhiteSpace(configFilePath))
-                writeHelp();
+                _messenger?.ProgramHelp();
             else if (!_filesystem.FileExists(configFilePath))
-                _consoleWriter.WriteLine("Config file does not exist.");
+                _messenger?.ConfigDoesntExist();
             else {
                 _configReader.ReadConfig(args[1]);
 
                 if (!_configReader.ConfigIsValid)
-                    _consoleWriter.WriteLine("Config file is not valid.");
+                    _messenger?.ConfigFileNotValid();
             }
-
-        }
-
-        static string? getConfigFilePath(string[] args) {
-            int flagPos = Array.IndexOf(args, "--configFile");
-            string? configFilePath = null;
-
-            if (flagPos > -1 && args.GetUpperBound(0) > flagPos)
-                configFilePath = args[flagPos + 1];
-
-            return configFilePath;
-        }
-
-        static void writeHelp() {
-            _consoleWriter.WriteLine("Usage: PhotoImporter --configFile [pathToConfig].json");
-            _consoleWriter.WriteLine("");
-            _consoleWriter.WriteLine("Options:");
-            _consoleWriter.WriteLine("  --configFile\tPath to the JSON file containing the configuration for this importer instance.");
         }
     }
 }
