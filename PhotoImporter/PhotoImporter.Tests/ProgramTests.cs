@@ -18,6 +18,7 @@ public class MainTests {
     
     ISetup<IConsoleWriter> _writeLine;
     ISetup<IConfigReader> _readConfig;
+    ISetup<IConfigReader, bool> _configIsValid;
     ISetup<IFilesystem, bool> _fileExists;
 
     int _index;
@@ -32,15 +33,18 @@ public class MainTests {
 
         _configReader = new Mock<IConfigReader>();
         _readConfig = _configReader.Setup(x => x.ReadConfig(It.IsAny<string>()));
+        _configIsValid = _configReader.Setup(x => x.ConfigIsValid);
 
         _filesystem = new Mock<IFilesystem>();
         _fileExists = _filesystem.Setup(x => x.FileExists(It.IsAny<string>()));
         
         _index = 0;
 
-        Program.SetConsoleWriter(_consoleWriter.Object);
-        Program.SetConfigReader(_configReader.Object);
-        Program.SetFilesystem(_filesystem.Object);
+        Program.InjectDependencies(
+            _consoleWriter.Object,
+            _configReader.Object,
+            _filesystem.Object
+        );
     }
 
     [TestMethod]
@@ -64,8 +68,7 @@ public class MainTests {
 
         main("--configFile", CONFIG_PATH);
 
-        Assert.AreEqual(1, _writeLineResults.Count);
-        Assert.AreEqual("Config file does not exist.", _writeLineResults[_index++]);
+        verifySingleMessage("Config file does not exist.");
     }
 
     [TestMethod]
@@ -76,6 +79,16 @@ public class MainTests {
         main("--configFile", CONFIG_PATH);
 
         _configReader.Verify(x => x.ReadConfig(CONFIG_PATH), Times.Once);
+    }
+
+    [TestMethod]
+    public void Main_BadConfig_MessageWritten() {
+        _fileExists.Returns(true);
+        _configIsValid.Returns(false);
+
+        main("--configFile", CONFIG_PATH);
+
+        verifySingleMessage("Config file is not valid.");
     }
 
     void testBadArguments(params string[] args)
@@ -94,6 +107,11 @@ public class MainTests {
         Assert.AreEqual("", _writeLineResults[_index++]);
         Assert.AreEqual("Options:", _writeLineResults[_index++]);
         Assert.AreEqual("  --configFile\tPath to the JSON file containing the configuration for this importer instance.", _writeLineResults[_index++]);
+    }
+
+    void verifySingleMessage(string message) {
+        Assert.AreEqual(1, _writeLineResults.Count);
+        Assert.AreEqual(message, _writeLineResults[_index++]);
     }
 
     void main(params string[] args)

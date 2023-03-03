@@ -4,17 +4,15 @@ namespace PhotoImporter {
     public class Program {
         static IConsoleWriter _consoleWriter = new ConsoleWriter();
         static IConfigReader _configReader = new ConfigReader();
-        static IFilesystem _filesystem;
+        static IFilesystem _filesystem = new Filesystem();
 
-        public static void SetConsoleWriter(IConsoleWriter consoleWriter) {
+        public static void InjectDependencies(
+            IConsoleWriter consoleWriter,
+            IConfigReader configReader,
+            IFilesystem filesystem
+        ) {
             _consoleWriter = consoleWriter;
-        }
-
-        public static void SetConfigReader(IConfigReader configReader) {
             _configReader = configReader;
-        }
-
-        public static void SetFilesystem(IFilesystem filesystem) {
             _filesystem = filesystem;
         }
 
@@ -25,8 +23,13 @@ namespace PhotoImporter {
                 writeHelp();
             else if (!_filesystem.FileExists(configFilePath))
                 _consoleWriter.WriteLine("Config file does not exist.");
-            else
+            else {
                 _configReader.ReadConfig(args[1]);
+
+                if (!_configReader.ConfigIsValid)
+                    _consoleWriter.WriteLine("Config file is not valid.");
+            }
+
         }
 
         static string? getConfigFilePath(string[] args) {

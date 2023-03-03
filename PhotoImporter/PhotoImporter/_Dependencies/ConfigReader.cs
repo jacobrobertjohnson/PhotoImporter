@@ -3,5 +3,7 @@ namespace PhotoImporter._Dependencies {
         public void ReadConfig(string configPath) {
             
         }
+
+        public bool ConfigIsValid { get; private set; }
     }
 }
