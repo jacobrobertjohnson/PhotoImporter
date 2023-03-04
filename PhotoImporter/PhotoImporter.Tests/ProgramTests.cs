@@ -20,6 +20,7 @@ public class MainTests {
     ISetup<IConsoleWriter> _writeLine;
     ISetup<IConfigReader> _readConfig;
     ISetup<IConfigReader, bool> _configIsValid;
+    ISetup<IConfigReader, AppConfig?> _appConfig;
     ISetup<IFilesystem, bool> _fileExists;
     ISetup<IPhotoImporter> _runJob;
 
@@ -36,12 +37,13 @@ public class MainTests {
         _configReader = new Mock<IConfigReader>();
         _readConfig = _configReader.Setup(x => x.ReadConfig(It.IsAny<string>()));
         _configIsValid = _configReader.Setup(x => x.ConfigIsValid);
+        _appConfig = _configReader.Setup(x => x.AppConfig);
 
         _filesystem = new Mock<IFilesystem>();
         _fileExists = _filesystem.Setup(x => x.FileExists(It.IsAny<string>()));
 
         _photoImporter = new Mock<IPhotoImporter>();
-        _runJob = _photoImporter.Setup(x => x.RunJob());
+        _runJob = _photoImporter.Setup(x => x.RunJob(It.IsAny<AppConfig>()));
         
         _index = 0;
 
@@ -99,13 +101,16 @@ public class MainTests {
 
     [TestMethod]
     public void Main_GoodConfig_JobStarted() {
+        var config = new AppConfig();
+
         _fileExists.Returns(true);
         _configIsValid.Returns(true);
+        _appConfig.Returns(config);
         _runJob.Verifiable();
 
         main("--configFile", CONFIG_PATH);
 
-        _photoImporter.Verify(x => x.RunJob(), Times.Once);
+        _photoImporter.Verify(x => x.RunJob(config), Times.Once);
     }
 
     void testBadArguments(params string[] args)

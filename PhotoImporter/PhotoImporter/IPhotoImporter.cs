@@ -1,5 +1,5 @@
 namespace PhotoImporter {
     public interface IPhotoImporter {
-        void RunJob();
+        void RunJob(AppConfig? config);
     }
 }

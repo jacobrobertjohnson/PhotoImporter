@@ -33,7 +33,7 @@ namespace PhotoImporter {
                 if (!_configReader.ConfigIsValid)
                     _messenger?.ConfigFileNotValid();
                 else
-                    _photoImporter.RunJob();
+                    _photoImporter.RunJob(_configReader.AppConfig);
             }
         }
     }

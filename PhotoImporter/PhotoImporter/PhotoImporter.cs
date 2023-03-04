@@ -1,6 +1,6 @@
 namespace PhotoImporter {
     public class PhotoImporter : IPhotoImporter {
-        public void RunJob() {
+        public void RunJob(AppConfig? config) {
             
         }
     }

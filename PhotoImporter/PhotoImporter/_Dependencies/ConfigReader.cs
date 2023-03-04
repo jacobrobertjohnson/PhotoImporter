@@ -5,5 +5,7 @@ namespace PhotoImporter._Dependencies {
         }
 
         public bool ConfigIsValid { get; private set; }
+
+        public AppConfig? AppConfig { get; private set; }
     }
 }
