@@ -4,8 +4,11 @@ namespace PhotoImporter {
     public class Program {
         static IConfigReader _configReader = new ConfigReader();
         static IFilesystem _filesystem = new Filesystem();
-        static Messenger? _messenger;
-        static IPhotoImporter _photoImporter = new PhotoImporter();
+        static Messenger _messenger = new Messenger(new ConsoleWriter());
+        static IPhotoImporter _photoImporter = new PhotoImporter(
+            _filesystem,
+            _messenger
+        );
 
 
         public static void InjectDependencies(
@@ -24,14 +27,14 @@ namespace PhotoImporter {
             string? configFilePath = Arguments.GetConfigFilePath(args);
 
             if (string.IsNullOrWhiteSpace(configFilePath))
-                _messenger?.ProgramHelp();
+                _messenger.ProgramHelp();
             else if (!_filesystem.FileExists(configFilePath))
-                _messenger?.ConfigDoesntExist();
+                _messenger.ConfigDoesntExist();
             else {
                 _configReader.ReadConfig(args[1]);
 
                 if (!_configReader.ConfigIsValid)
-                    _messenger?.ConfigFileNotValid();
+                    _messenger.ConfigFileNotValid();
                 else
                     _photoImporter.RunJob(_configReader.AppConfig);
             }

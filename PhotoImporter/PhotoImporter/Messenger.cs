@@ -21,5 +21,8 @@ namespace PhotoImporter {
 
         public void ConfigFileNotValid()
             => _consoleWriter.WriteLine("Config file is not valid.");
+
+        public void SourceDirectoryDoesntExist()
+            => _consoleWriter.WriteLine("Source directory doesn't exist.");
     }
 }

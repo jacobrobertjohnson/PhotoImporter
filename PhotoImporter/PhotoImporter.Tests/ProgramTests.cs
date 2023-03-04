@@ -7,45 +7,26 @@ using System.Collections.Generic;
 namespace PhotoImporter.Tests;
 
 [TestClass]
-public class MainTests {
+public class MainTests : _TestBase {
     const string CONFIG_PATH = "/fake/config/path.json";
-
-    Mock<IConsoleWriter> _consoleWriter;
-    Mock<IConfigReader> _configReader;
-    Mock<IFilesystem> _filesystem;
     Mock<IPhotoImporter> _photoImporter;
     
-    List<string> _writeLineResults;
-    
-    ISetup<IConsoleWriter> _writeLine;
     ISetup<IConfigReader> _readConfig;
     ISetup<IConfigReader, bool> _configIsValid;
     ISetup<IConfigReader, AppConfig?> _appConfig;
     ISetup<IFilesystem, bool> _fileExists;
     ISetup<IPhotoImporter> _runJob;
 
-    int _index;
-
     [TestInitialize]
-    public void Setup() {
-        _consoleWriter = new Mock<IConsoleWriter>();
-        _writeLineResults = new List<string>();
-        _writeLine = _consoleWriter
-            .Setup(x => x.WriteLine(It.IsAny<string>()));
-        _writeLine.Callback((string line) => _writeLineResults.Add(line));
-
-        _configReader = new Mock<IConfigReader>();
+    public void Setup() {  
         _readConfig = _configReader.Setup(x => x.ReadConfig(It.IsAny<string>()));
         _configIsValid = _configReader.Setup(x => x.ConfigIsValid);
         _appConfig = _configReader.Setup(x => x.AppConfig);
 
-        _filesystem = new Mock<IFilesystem>();
         _fileExists = _filesystem.Setup(x => x.FileExists(It.IsAny<string>()));
 
         _photoImporter = new Mock<IPhotoImporter>();
         _runJob = _photoImporter.Setup(x => x.RunJob(It.IsAny<AppConfig>()));
-        
-        _index = 0;
 
         Program.InjectDependencies(
             _consoleWriter.Object,
@@ -129,11 +110,6 @@ public class MainTests {
         Assert.AreEqual("", _writeLineResults[_index++]);
         Assert.AreEqual("Options:", _writeLineResults[_index++]);
         Assert.AreEqual("  --configFile\tPath to the JSON file containing the configuration for this importer instance.", _writeLineResults[_index++]);
-    }
-
-    void verifySingleMessage(string message) {
-        Assert.AreEqual(1, _writeLineResults.Count);
-        Assert.AreEqual(message, _writeLineResults[_index++]);
     }
 
     void main(params string[] args)
