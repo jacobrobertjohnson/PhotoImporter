@@ -12,12 +12,18 @@ public class PhotoImporterTests : _TestBase {
     PhotoImporter _photoImporter;
 
     ISetup<IFilesystem, bool> _directoryExists;
+    ISetup<IFilesystem, string[]> _getFiles;
 
     [TestInitialize]
     public void Setup() {
         _directoryExists = _filesystem.Setup(x => x.DirectoryExists(It.IsAny<string>()));
-
-        _config = new AppConfig();
+        _getFiles = _filesystem.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>()));
+        
+        _config = new AppConfig()
+        {
+            SourceDir = "/fakepath/imagesource",
+            SourceFilePattern = "*.rar"
+        };
 
         _photoImporter = new PhotoImporter(_filesystem.Object, new Messenger(_consoleWriter.Object));
     }
@@ -31,5 +37,38 @@ public class PhotoImporterTests : _TestBase {
         verifySingleMessage("Source directory doesn't exist.");
     }
 
+    [TestMethod]
+    public void RunJob_SourceFolderDoesntExist_FilesNotRead() {
+        _directoryExists.Returns(false);
+        _getFiles.Verifiable();
+
+        runJob();
+
+        _filesystem.Verify(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void RunJob_SourceFolderExists_FilesRead() {
+        _directoryExists.Returns(true);
+        _getFiles.Verifiable();
+
+        runJob();
+
+        _filesystem.Verify(x => x.GetFiles(_config.SourceDir, _config.SourceFilePattern), Times.Once);
+    }
+
+    // [TestMethod]
+    // public void RunJob_EachFileGetsProcessed() {
+    //     _directoryExists.Returns(true);
+    //     _getFiles.Returns(new [] {
+    //         "/fakepath/file1.jpg",
+    //         "/fakepath/file2.jpg",
+    //     });
+
+    //     runJob();
+
+
+    // }
+
     void runJob() => _photoImporter.RunJob(_config);
-}
+} 

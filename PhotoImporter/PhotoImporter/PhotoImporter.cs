@@ -15,7 +15,15 @@ namespace PhotoImporter {
         }
 
         public void RunJob(AppConfig? config) {
-            _messenger.SourceDirectoryDoesntExist();
+            if (!_filesystem.DirectoryExists(config.SourceDir))
+                _messenger.SourceDirectoryDoesntExist();
+            else
+                findAndProcessFiles(config);
+        }
+
+        void findAndProcessFiles(AppConfig config)
+        {
+            _filesystem.GetFiles(config.SourceDir, config.SourceFilePattern);
         }
     }
 }
