@@ -24,5 +24,8 @@ namespace PhotoImporter {
 
         public void SourceDirectoryDoesntExist()
             => _consoleWriter.WriteLine("Source directory doesn't exist.");
+
+        internal void FileAlreadyInLibrary(string path)
+            => _consoleWriter.WriteLine($"{path} already exists in the photo library. It will not be added again.");
     }
 }
