@@ -2,25 +2,20 @@
 
 namespace PhotoImporter {
     public class Program {
-        static IConfigReader _configReader = new ConfigReader();
-        static IFilesystem _filesystem = new Filesystem();
-        static Messenger _messenger = new Messenger(new ConsoleWriter());
-        static IPhotoImporter _photoImporter = new PhotoImporter(
-            _filesystem,
-            _messenger
-        );
+        static IConfigReader _configReader;
+        static IFilesystem _filesystem;
+        static Messenger _messenger;
+        static IPhotoImporter _photoImporter;
 
+        static Program() {
+            InjectDependencies(new DependencyFactory());
+        }
 
-        public static void InjectDependencies(
-            IConsoleWriter consoleWriter,
-            IConfigReader configReader,
-            IFilesystem filesystem,
-            IPhotoImporter photoImporter
-        ) {
-            _messenger = new Messenger(consoleWriter);
-            _configReader = configReader;
-            _filesystem = filesystem;
-            _photoImporter = photoImporter;
+        public static void InjectDependencies(IDependencyFactory factory) {
+            _messenger = factory.GetMessenger();
+            _configReader = factory.GetConfigReader();
+            _filesystem = factory.GetFilesystem();
+            _photoImporter = factory.GetPhotoImporter();
         }
 
         public static void Main(string[] args) {

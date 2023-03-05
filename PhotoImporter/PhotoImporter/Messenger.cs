@@ -4,9 +4,9 @@ namespace PhotoImporter {
     public class Messenger {
         IConsoleWriter _consoleWriter;
 
-        public Messenger(IConsoleWriter consoleWriter)
+        public Messenger(IDependencyFactory factory)
         {
-            _consoleWriter = consoleWriter;
+            _consoleWriter = factory.GetConsoleWriter();
         }
 
         public void ProgramHelp() {

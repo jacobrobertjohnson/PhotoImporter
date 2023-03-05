@@ -25,7 +25,7 @@ public class PhotoImporterTests : _TestBase {
             SourceFilePattern = "*.rar"
         };
 
-        _photoImporter = new PhotoImporter(_filesystem.Object, new Messenger(_consoleWriter.Object));
+        _photoImporter = new PhotoImporter(_dependencies.Object);
     }
 
     [TestMethod]

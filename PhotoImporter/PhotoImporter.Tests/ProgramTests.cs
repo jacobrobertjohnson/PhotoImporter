@@ -9,7 +9,6 @@ namespace PhotoImporter.Tests;
 [TestClass]
 public class MainTests : _TestBase {
     const string CONFIG_PATH = "/fake/config/path.json";
-    Mock<IPhotoImporter> _photoImporter;
     
     ISetup<IConfigReader> _readConfig;
     ISetup<IConfigReader, bool> _configIsValid;
@@ -25,15 +24,9 @@ public class MainTests : _TestBase {
 
         _fileExists = _filesystem.Setup(x => x.FileExists(It.IsAny<string>()));
 
-        _photoImporter = new Mock<IPhotoImporter>();
         _runJob = _photoImporter.Setup(x => x.RunJob(It.IsAny<AppConfig>()));
 
-        Program.InjectDependencies(
-            _consoleWriter.Object,
-            _configReader.Object,
-            _filesystem.Object,
-            _photoImporter.Object
-        );
+        Program.InjectDependencies(_dependencies.Object);
     }
 
     [TestMethod]

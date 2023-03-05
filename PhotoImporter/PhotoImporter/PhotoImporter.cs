@@ -5,13 +5,10 @@ namespace PhotoImporter {
         IFilesystem _filesystem;
         Messenger _messenger;
 
-        public PhotoImporter(
-            IFilesystem filesystem,
-            Messenger messenger
-        )
+        public PhotoImporter(IDependencyFactory factory)
         {
-            _filesystem = filesystem;
-            _messenger = messenger;
+            _filesystem = factory.GetFilesystem();
+            _messenger = factory.GetMessenger();
         }
 
         public void RunJob(AppConfig? config) {
