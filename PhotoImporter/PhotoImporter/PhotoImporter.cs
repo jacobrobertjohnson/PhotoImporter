@@ -3,11 +3,13 @@ using PhotoImporter._Dependencies;
 namespace PhotoImporter {
     public class PhotoImporter : IPhotoImporter {
         IFilesystem _filesystem;
+        IPhotoProcessor _photoProcessor;
         Messenger _messenger;
 
         public PhotoImporter(IDependencyFactory factory)
         {
             _filesystem = factory.GetFilesystem();
+            _photoProcessor = factory.GetPhotoProcessor();
             _messenger = factory.GetMessenger();
         }
 
@@ -20,7 +22,8 @@ namespace PhotoImporter {
 
         void findAndProcessFiles(AppConfig config)
         {
-            _filesystem.GetFiles(config.SourceDir, config.SourceFilePattern);
+            foreach (string file in _filesystem.GetFiles(config.SourceDir, config.SourceFilePattern))
+                _photoProcessor.ProcessFile(file);
         }
     }
 }

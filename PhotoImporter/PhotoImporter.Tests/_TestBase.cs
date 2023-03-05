@@ -12,6 +12,7 @@ public abstract class _TestBase {
     protected Mock<IFilesystem> _filesystem;
     protected Mock<IDependencyFactory> _dependencies;
     protected Mock<IPhotoImporter> _photoImporter;
+    protected Mock<IPhotoProcessor> _photoProcessor;
 
     protected ISetup<IConsoleWriter> _writeLine;
     protected List<string> _writeLineResults;
@@ -24,6 +25,7 @@ public abstract class _TestBase {
         _configReader = new Mock<IConfigReader>();
         _filesystem = new Mock<IFilesystem>();
         _photoImporter = new Mock<IPhotoImporter>();
+        _photoProcessor = new Mock<IPhotoProcessor>();
 
         _dependencies = new Mock<IDependencyFactory>();
         _dependencies.Setup(x => x.GetConsoleWriter()).Returns(_consoleWriter.Object);
@@ -31,6 +33,7 @@ public abstract class _TestBase {
         _dependencies.Setup(x => x.GetFilesystem()).Returns(_filesystem.Object);
         _dependencies.Setup(x => x.GetMessenger()).Returns(new Messenger(_dependencies.Object));
         _dependencies.Setup(x => x.GetPhotoImporter()).Returns(_photoImporter.Object);
+        _dependencies.Setup(x => x.GetPhotoProcessor()).Returns(_photoProcessor.Object);
 
         _writeLine = _consoleWriter.Setup(x => x.WriteLine(It.IsAny<string>()));
         _writeLineResults = new List<string>();

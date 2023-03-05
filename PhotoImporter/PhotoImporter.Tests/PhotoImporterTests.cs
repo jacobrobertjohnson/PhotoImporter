@@ -13,12 +13,14 @@ public class PhotoImporterTests : _TestBase {
 
     ISetup<IFilesystem, bool> _directoryExists;
     ISetup<IFilesystem, string[]> _getFiles;
+    ISetup<IPhotoProcessor> _processFile;
 
     [TestInitialize]
     public void Setup() {
         _directoryExists = _filesystem.Setup(x => x.DirectoryExists(It.IsAny<string>()));
         _getFiles = _filesystem.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>()));
-        
+        _processFile = _photoProcessor.Setup(x => x.ProcessFile(It.IsAny<string>()));
+
         _config = new AppConfig()
         {
             SourceDir = "/fakepath/imagesource",
@@ -57,18 +59,21 @@ public class PhotoImporterTests : _TestBase {
         _filesystem.Verify(x => x.GetFiles(_config.SourceDir, _config.SourceFilePattern), Times.Once);
     }
 
-    // [TestMethod]
-    // public void RunJob_EachFileGetsProcessed() {
-    //     _directoryExists.Returns(true);
-    //     _getFiles.Returns(new [] {
-    //         "/fakepath/file1.jpg",
-    //         "/fakepath/file2.jpg",
-    //     });
+    [TestMethod]
+    public void RunJob_EachFileGetsProcessed() {
+        _directoryExists.Returns(true);
+        _getFiles.Returns(new [] {
+            "/fakepath/file1.jpg",
+            "/fakepath/file2.jpg",
+        });
+        _processFile.Verifiable();
 
-    //     runJob();
+        runJob();
 
-
-    // }
+        _photoProcessor.Verify(x => x.ProcessFile(It.IsAny<string>()), Times.Exactly(2));
+        _photoProcessor.Verify(x => x.ProcessFile("/fakepath/file1.jpg"), Times.Once);
+        _photoProcessor.Verify(x => x.ProcessFile("/fakepath/file2.jpg"), Times.Once);
+    }
 
     void runJob() => _photoImporter.RunJob(_config);
 } 

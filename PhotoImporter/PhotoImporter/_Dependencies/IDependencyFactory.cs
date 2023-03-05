@@ -6,4 +6,5 @@ public interface IDependencyFactory {
     IFilesystem GetFilesystem();
     Messenger GetMessenger();
     IPhotoImporter GetPhotoImporter();
+    IPhotoProcessor GetPhotoProcessor();
 }

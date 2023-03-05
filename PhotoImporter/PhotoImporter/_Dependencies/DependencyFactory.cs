@@ -6,6 +6,7 @@ public class DependencyFactory : IDependencyFactory {
     IFilesystem _filesystem;
     Messenger _messenger;
     IPhotoImporter _photoImporter;
+    IPhotoProcessor _photoProcessor;
 
     public DependencyFactory()
     {
@@ -14,6 +15,7 @@ public class DependencyFactory : IDependencyFactory {
         _filesystem = new Filesystem();
         _messenger = new Messenger(this);
         _photoImporter = new PhotoImporter(this);
+        _photoProcessor = new PhotoProcessor();
     }
 
     public IConfigReader GetConfigReader() => _configReader;
@@ -21,4 +23,5 @@ public class DependencyFactory : IDependencyFactory {
     public IFilesystem GetFilesystem() => _filesystem;
     public Messenger GetMessenger() => _messenger;
     public IPhotoImporter GetPhotoImporter() => _photoImporter;
+    public IPhotoProcessor GetPhotoProcessor() => _photoProcessor;
 }
