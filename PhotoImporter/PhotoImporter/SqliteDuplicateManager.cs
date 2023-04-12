@@ -14,11 +14,17 @@ public class SqliteDuplicateManager : IDuplicateManager {
     }
 
     void buildDatabaseStructure() {
-        _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos", reader => { });
+        _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FilePath TEXT)", reader => { });
     }
 
-    public bool FileAlreadyAdded(string path) {
-        throw new NotImplementedException();
+    public bool FileAlreadyAdded(string hash) {
+        bool fileFound = false;
+
+        _context.RunQuery($"SELECT 1 FROM Photos WHERE Hash = '{hash}'", reader => {
+            fileFound = true;
+        });
+
+        return fileFound;
     }
 
     public void AddFile(string path) {
