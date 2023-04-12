@@ -12,13 +12,15 @@ public class PhotoProcessor : IPhotoProcessor {
     }
 
     public void ProcessFile(string path) {
-        if (_duplicateManager.FileAlreadyAdded(path))
+        string hash = null;
+
+        if (_duplicateManager.FileAlreadyAdded(hash))
             _messenger.FileAlreadyInLibrary(path);
         else
-            addFileToLibrary(path);
+            addFileToLibrary(hash, path);
     }
 
-    void addFileToLibrary(string path) {
-        _duplicateManager.AddFile(path);
+    void addFileToLibrary(string hash, string path) {
+        _duplicateManager.AddFile(hash, path);
     }
 }

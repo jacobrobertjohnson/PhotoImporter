@@ -2,16 +2,15 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Language.Flow;
-using PhotoImporter;
 using Microsoft.Data.Sqlite;
-using PhotoImporter._Dependencies;
 
 
 namespace PhotoImporter.Tests;
 
 [TestClass]
 public class SqliteDuplicateManagerTests : _TestBase {
-    const string FILE_HASH = "The MD5",
+    const string FILE_PATH = @"C:\fakepath\image.jpg",
+        FILE_HASH = "The MD5",
         HASH_LOOKUP_QUERY = $"SELECT 1 FROM Photos WHERE Hash = '{FILE_HASH}'";
 
     ISetup<ISqliteContext> _runQuery;
@@ -56,6 +55,13 @@ public class SqliteDuplicateManagerTests : _TestBase {
         _runQuery.Callback((string query, Action<SqliteDataReader> onRun) => { });
         
         Assert.IsFalse(_dupeMan.FileAlreadyAdded(FILE_HASH));
+    }
+
+    [TestMethod]
+    public void AddFile_HashAndPathPassedIntoQuery() {
+        _dupeMan.AddFile(FILE_HASH, FILE_PATH);
+
+        verifyRunQuery($"INSERT INTO Photos (Hash, FilePath) VALUES({FILE_HASH}, {FILE_PATH})");
     }
 
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);

@@ -1,3 +1,4 @@
+using Microsoft.Data.Sqlite;
 using PhotoImporter._Dependencies;
 
 namespace PhotoImporter;
@@ -14,7 +15,7 @@ public class SqliteDuplicateManager : IDuplicateManager {
     }
 
     void buildDatabaseStructure() {
-        _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FilePath TEXT)", reader => { });
+        _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FilePath TEXT)", noQuery);
     }
 
     public bool FileAlreadyAdded(string hash) {
@@ -27,7 +28,9 @@ public class SqliteDuplicateManager : IDuplicateManager {
         return fileFound;
     }
 
-    public void AddFile(string path) {
-        throw new NotImplementedException();
+    public void AddFile(string hash, string path) {
+        _context.RunQuery($"INSERT INTO Photos (Hash, FilePath) VALUES({hash}, {path})", noQuery);
     }
+
+    void noQuery(SqliteDataReader reader) { }
 }
