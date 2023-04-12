@@ -8,24 +8,24 @@ using Microsoft.Data.Sqlite;
 namespace PhotoImporter.Tests;
 
 [TestClass]
-public class SqliteDuplicateManagerTests : _TestBase {
+public class SqliteLibraryManagerTests : _TestBase {
     const string FILE_PATH = @"C:\fakepath\image.jpg",
         FILE_HASH = "The MD5",
         HASH_LOOKUP_QUERY = $"SELECT 1 FROM Photos WHERE Hash = '{FILE_HASH}'";
 
     ISetup<ISqliteContext> _runQuery;
-    IDuplicateManager _dupeMan;
+    ILibraryManager _libMan;
     
     [TestInitialize]
     public void Setup() {
         _runQuery = _sqliteContext.Setup(x => x.RunQuery(It.IsAny<string>(), It.IsAny<Action<SqliteDataReader>>()));
         _runQuery.Verifiable();
 
-        makeSqliteDuplicateManager();
+        makeSqliteLibraryManager();
     }
 
-    void makeSqliteDuplicateManager() {
-        _dupeMan = new SqliteDuplicateManager(_dependencies.Object);
+    void makeSqliteLibraryManager() {
+        _libMan = new SqliteLibraryManager(_dependencies.Object);
     }
 
     [TestMethod]
@@ -35,7 +35,7 @@ public class SqliteDuplicateManagerTests : _TestBase {
 
     [TestMethod]
     public void FileAlreadyAdded_HashPassedIntoQuery() {
-        _dupeMan.FileAlreadyAdded(FILE_HASH);
+        _libMan.FileAlreadyAdded(FILE_HASH);
 
         verifyRunQuery(HASH_LOOKUP_QUERY);
     }
@@ -47,19 +47,19 @@ public class SqliteDuplicateManagerTests : _TestBase {
                 onRun(null);
         });
         
-        Assert.IsTrue(_dupeMan.FileAlreadyAdded(FILE_HASH));
+        Assert.IsTrue(_libMan.FileAlreadyAdded(FILE_HASH));
     }
 
     [TestMethod]
     public void FileAlreadyAdded_FileNotFound_FalseReturned() {
         _runQuery.Callback((string query, Action<SqliteDataReader> onRun) => { });
         
-        Assert.IsFalse(_dupeMan.FileAlreadyAdded(FILE_HASH));
+        Assert.IsFalse(_libMan.FileAlreadyAdded(FILE_HASH));
     }
 
     [TestMethod]
     public void AddFile_HashAndPathPassedIntoQuery() {
-        _dupeMan.AddFile(FILE_HASH, FILE_PATH);
+        _libMan.AddFile(FILE_HASH, FILE_PATH);
 
         verifyRunQuery($"INSERT INTO Photos (Hash, FilePath) VALUES({FILE_HASH}, {FILE_PATH})");
     }

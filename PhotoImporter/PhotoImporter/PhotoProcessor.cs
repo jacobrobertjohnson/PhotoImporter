@@ -4,25 +4,25 @@ namespace PhotoImporter;
 
 public class PhotoProcessor : IPhotoProcessor {
     Messenger _messenger;
-    IDuplicateManager _duplicateManager;
+    ILibraryManager _libraryManager;
     IFilesystem _filesystem;
 
     public PhotoProcessor(IDependencyFactory factory) {
         _messenger = factory.GetMessenger();
-        _duplicateManager = factory.GetDuplicateManager();
+        _libraryManager = factory.GetLibraryManager();
         _filesystem = factory.GetFilesystem();
     }
 
     public void ProcessFile(string path) {
         string hash = _filesystem.GetFileHash(path);
 
-        if (_duplicateManager.FileAlreadyAdded(hash))
+        if (_libraryManager.FileAlreadyAdded(hash))
             _messenger.FileAlreadyInLibrary(path);
         else
             addFileToLibrary(hash, path);
     }
 
     void addFileToLibrary(string hash, string path) {
-        _duplicateManager.AddFile(hash, path);
+        _libraryManager.AddFile(hash, path);
     }
 }

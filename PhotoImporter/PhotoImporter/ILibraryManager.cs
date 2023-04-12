@@ -1,6 +1,6 @@
 namespace PhotoImporter;
 
-public interface IDuplicateManager {
+public interface ILibraryManager {
     bool FileAlreadyAdded(string hash);
     void AddFile(string hash, string path);
 }

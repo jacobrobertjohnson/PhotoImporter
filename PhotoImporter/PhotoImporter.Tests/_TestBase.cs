@@ -14,7 +14,7 @@ public abstract class _TestBase {
     protected Mock<IPhotoImporter> _photoImporter;
     protected Mock<IPhotoProcessor> _photoProcessor;
     protected Mock<ISqliteContext> _sqliteContext;
-    protected Mock<IDuplicateManager> _duplicateManager;
+    protected Mock<ILibraryManager> _libraryManager;
 
     protected ISetup<IConsoleWriter> _writeLine;
     protected List<string> _writeLineResults;
@@ -29,7 +29,7 @@ public abstract class _TestBase {
         _photoImporter = new Mock<IPhotoImporter>();
         _photoProcessor = new Mock<IPhotoProcessor>();
         _sqliteContext = new Mock<ISqliteContext>();
-        _duplicateManager = new Mock<IDuplicateManager>();
+        _libraryManager = new Mock<ILibraryManager>();
 
         _dependencies = new Mock<IDependencyFactory>();
         _dependencies.Setup(x => x.GetConsoleWriter()).Returns(_consoleWriter.Object);
@@ -38,7 +38,7 @@ public abstract class _TestBase {
         _dependencies.Setup(x => x.GetMessenger()).Returns(new Messenger(_dependencies.Object));
         _dependencies.Setup(x => x.GetPhotoImporter()).Returns(_photoImporter.Object);
         _dependencies.Setup(x => x.GetPhotoProcessor()).Returns(_photoProcessor.Object);
-        _dependencies.Setup(x => x.GetDuplicateManager()).Returns(_duplicateManager.Object);
+        _dependencies.Setup(x => x.GetLibraryManager()).Returns(_libraryManager.Object);
         _dependencies.Setup(x => x.GetSqliteContext()).Returns(_sqliteContext.Object);
 
         _writeLine = _consoleWriter.Setup(x => x.WriteLine(It.IsAny<string>()));

@@ -8,5 +8,5 @@ public interface IDependencyFactory {
     IPhotoImporter GetPhotoImporter();
     IPhotoProcessor GetPhotoProcessor();
     ISqliteContext GetSqliteContext();
-    IDuplicateManager GetDuplicateManager();
+    ILibraryManager GetLibraryManager();
 }

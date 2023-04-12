@@ -3,11 +3,11 @@ using PhotoImporter._Dependencies;
 
 namespace PhotoImporter;
 
-public class SqliteDuplicateManager : IDuplicateManager {
+public class SqliteLibraryManager : ILibraryManager {
     ISqliteContext _context;
     IConfigReader _configReader;
 
-    public SqliteDuplicateManager(IDependencyFactory factory) {
+    public SqliteLibraryManager(IDependencyFactory factory) {
         _configReader = factory.GetConfigReader();
         _context = factory.GetSqliteContext();
 

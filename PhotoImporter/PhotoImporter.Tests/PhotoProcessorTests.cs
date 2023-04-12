@@ -9,15 +9,15 @@ public class PhotoProcessorTests : _TestBase {
     const string FILE_PATH = "/fakepath/file.jpg",
         FILE_HASH = "The MD5 Hash";
 
-    ISetup<IDuplicateManager, bool> _fileAlreadyAdded;
-    ISetup<IDuplicateManager> _addFile;
+    ISetup<ILibraryManager, bool> _fileAlreadyAdded;
+    ISetup<ILibraryManager> _addFile;
 
     IPhotoProcessor _processor;
 
     [TestInitialize]
     public void Setup() {
-        _fileAlreadyAdded = _duplicateManager.Setup(x => x.FileAlreadyAdded(It.IsAny<string>()));
-        _addFile = _duplicateManager.Setup(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>()));
+        _fileAlreadyAdded = _libraryManager.Setup(x => x.FileAlreadyAdded(It.IsAny<string>()));
+        _addFile = _libraryManager.Setup(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>()));
         
         _filesystem.Setup(x => x.GetFileHash(It.IsAny<string>())).Returns(FILE_HASH);
 
@@ -40,7 +40,7 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        _duplicateManager.Verify(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _libraryManager.Verify(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [TestMethod]
@@ -50,7 +50,7 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        _duplicateManager.Verify(x => x.AddFile(FILE_HASH, FILE_PATH), Times.Once);
+        _libraryManager.Verify(x => x.AddFile(FILE_HASH, FILE_PATH), Times.Once);
     }
 
     void processFile() => _processor.ProcessFile(FILE_PATH);
