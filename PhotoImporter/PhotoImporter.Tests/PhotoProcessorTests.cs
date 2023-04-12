@@ -18,6 +18,8 @@ public class PhotoProcessorTests : _TestBase {
     public void Setup() {
         _fileAlreadyAdded = _duplicateManager.Setup(x => x.FileAlreadyAdded(It.IsAny<string>()));
         _addFile = _duplicateManager.Setup(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>()));
+        
+        _filesystem.Setup(x => x.GetFileHash(It.IsAny<string>())).Returns(FILE_HASH);
 
         _processor = new PhotoProcessor(_dependencies.Object);
     }

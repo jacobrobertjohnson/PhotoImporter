@@ -3,5 +3,6 @@ namespace PhotoImporter._Dependencies {
         bool FileExists(string path);
         bool DirectoryExists(string path);
         string[] GetFiles(string dirPath, string searchPattern);
+        string GetFileHash(string path);
     }
 }
