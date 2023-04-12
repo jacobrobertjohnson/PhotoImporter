@@ -9,7 +9,7 @@ namespace PhotoImporter.Tests;
 public class PhotoImporterTests : _TestBase {
     AppConfig _config;
 
-    PhotoImporter _photoImporter;
+    PhotoImporter _importer;
 
     ISetup<IFilesystem, bool> _directoryExists;
     ISetup<IFilesystem, string[]> _getFiles;
@@ -27,7 +27,7 @@ public class PhotoImporterTests : _TestBase {
             SourceFilePattern = "*.rar"
         };
 
-        _photoImporter = new PhotoImporter(_dependencies.Object);
+        _importer = new PhotoImporter(_dependencies.Object);
     }
 
     [TestMethod]
@@ -75,5 +75,5 @@ public class PhotoImporterTests : _TestBase {
         _photoProcessor.Verify(x => x.ProcessFile("/fakepath/file2.jpg"), Times.Once);
     }
 
-    void runJob() => _photoImporter.RunJob(_config);
+    void runJob() => _importer.RunJob(_config);
 } 

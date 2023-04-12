@@ -7,5 +7,6 @@ public interface IDependencyFactory {
     Messenger GetMessenger();
     IPhotoImporter GetPhotoImporter();
     IPhotoProcessor GetPhotoProcessor();
+    ISqliteContext GetSqliteContext();
     IDuplicateManager GetDuplicateManager();
 }

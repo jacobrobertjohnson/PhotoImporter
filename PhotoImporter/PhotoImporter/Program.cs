@@ -19,7 +19,7 @@ namespace PhotoImporter {
         }
 
         public static void Main(string[] args) {
-            string? configFilePath = Arguments.GetConfigFilePath(args);
+            string configFilePath = Arguments.GetConfigFilePath(args);
 
             if (string.IsNullOrWhiteSpace(configFilePath))
                 _messenger.ProgramHelp();

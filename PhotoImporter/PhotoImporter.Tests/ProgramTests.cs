@@ -12,7 +12,7 @@ public class MainTests : _TestBase {
     
     ISetup<IConfigReader> _readConfig;
     ISetup<IConfigReader, bool> _configIsValid;
-    ISetup<IConfigReader, AppConfig?> _appConfig;
+    ISetup<IConfigReader, AppConfig> _appConfig;
     ISetup<IFilesystem, bool> _fileExists;
     ISetup<IPhotoImporter> _runJob;
 

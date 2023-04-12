@@ -13,7 +13,7 @@ namespace PhotoImporter {
             _messenger = factory.GetMessenger();
         }
 
-        public void RunJob(AppConfig? config) {
+        public void RunJob(AppConfig config) {
             if (!_filesystem.DirectoryExists(config.SourceDir))
                 _messenger.SourceDirectoryDoesntExist();
             else

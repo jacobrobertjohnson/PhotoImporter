@@ -7,6 +7,7 @@ public class DependencyFactory : IDependencyFactory {
     Messenger _messenger;
     IPhotoImporter _photoImporter;
     IPhotoProcessor _photoProcessor;
+    ISqliteContext _sqliteContext;
     IDuplicateManager _duplicateManager;
 
     public DependencyFactory()
@@ -17,7 +18,8 @@ public class DependencyFactory : IDependencyFactory {
         _messenger = new Messenger(this);
         _photoImporter = new PhotoImporter(this);
         _photoProcessor = new PhotoProcessor(this);
-        _duplicateManager = new DuplicateManager();
+        _sqliteContext = new SqliteContext();
+        _duplicateManager = new SqliteDuplicateManager(this);
     }
 
     public IConfigReader GetConfigReader() => _configReader;
@@ -26,5 +28,6 @@ public class DependencyFactory : IDependencyFactory {
     public Messenger GetMessenger() => _messenger;
     public IPhotoImporter GetPhotoImporter() => _photoImporter;
     public IPhotoProcessor GetPhotoProcessor() => _photoProcessor;
+    public ISqliteContext GetSqliteContext() => _sqliteContext;
     public IDuplicateManager GetDuplicateManager() => _duplicateManager;
 }

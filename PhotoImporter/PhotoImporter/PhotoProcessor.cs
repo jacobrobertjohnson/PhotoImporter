@@ -15,6 +15,10 @@ public class PhotoProcessor : IPhotoProcessor {
         if (_duplicateManager.FileAlreadyAdded(path))
             _messenger.FileAlreadyInLibrary(path);
         else
-            _duplicateManager.AddFile(path);
+            addFileToLibrary(path);
+    }
+
+    void addFileToLibrary(string path) {
+        _duplicateManager.AddFile(path);
     }
 }

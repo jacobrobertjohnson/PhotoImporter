@@ -11,14 +11,14 @@ public class PhotoProcessorTests : _TestBase {
     ISetup<IDuplicateManager, bool> _fileAlreadyAdded;
     ISetup<IDuplicateManager> _addFile;
 
-    IPhotoProcessor _photoProcessor;
+    IPhotoProcessor _processor;
 
     [TestInitialize]
     public void Setup() {
         _fileAlreadyAdded = _duplicateManager.Setup(x => x.FileAlreadyAdded(It.IsAny<string>()));
         _addFile = _duplicateManager.Setup(x => x.AddFile(It.IsAny<string>()));
 
-        _photoProcessor = new PhotoProcessor(_dependencies.Object);
+        _processor = new PhotoProcessor(_dependencies.Object);
     }
 
     [TestMethod]
@@ -50,5 +50,5 @@ public class PhotoProcessorTests : _TestBase {
         _duplicateManager.Verify(x => x.AddFile(FILE_PATH), Times.Once);
     }
 
-    void processFile() => _photoProcessor.ProcessFile(FILE_PATH);
+    void processFile() => _processor.ProcessFile(FILE_PATH);
 }
