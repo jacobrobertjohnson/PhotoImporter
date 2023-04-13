@@ -13,9 +13,9 @@ public class DependencyFactory : IDependencyFactory {
 
     public DependencyFactory()
     {
-        _configReader = new ConfigReader();
-        _consoleWriter = new ConsoleWriter();
         _filesystem = new Filesystem();
+        _configReader = new ConfigReader(this);
+        _consoleWriter = new ConsoleWriter();
         _messenger = new Messenger(this);
         _photoImporter = new PhotoImporter(this);
         _photoProcessor = new PhotoProcessor(this);

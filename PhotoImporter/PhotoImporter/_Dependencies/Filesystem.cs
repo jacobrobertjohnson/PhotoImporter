@@ -42,5 +42,7 @@ namespace PhotoImporter._Dependencies {
         public DateTime GetFileCreatedDate(string path) => File.GetCreationTime(path);
 
         public void CopyFile(string source, string destination, bool overwrite) => File.Copy(source, destination, overwrite);
+
+        public string ReadFile(string path) => File.ReadAllText(path);
     }
 }

@@ -1,10 +1,26 @@
+using Newtonsoft.Json;
+
 namespace PhotoImporter._Dependencies {
     public class ConfigReader : IConfigReader {
-        public void ReadConfig(string configPath) {
-            
+        IFilesystem _filesystem;
+
+        public ConfigReader(IDependencyFactory factory)
+        {
+            _filesystem = factory.GetFilesystem();
         }
 
-        public bool ConfigIsValid { get; private set; }
+        public void ReadConfig(string configPath) {
+            string fileContents = _filesystem.ReadFile(configPath);
+
+            this.AppConfig = JsonConvert.DeserializeObject<AppConfig>(fileContents);
+        }
+
+        public bool ConfigIsValid {
+            get => !string.IsNullOrEmpty(AppConfig.DatabasePath)
+                && !string.IsNullOrEmpty(AppConfig.SourceDir)
+                && !string.IsNullOrEmpty(AppConfig.SourceFilePattern)
+                && !string.IsNullOrEmpty(AppConfig.StoragePath);
+        }
 
         public AppConfig AppConfig { get; private set; }
     }

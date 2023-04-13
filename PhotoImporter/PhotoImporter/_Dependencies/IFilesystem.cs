@@ -7,5 +7,6 @@ namespace PhotoImporter._Dependencies {
         DateTime? GetImageTakenDate(string path);
         DateTime GetFileCreatedDate(string path);
         void CopyFile(string source, string destination, bool overwrite);
+        string ReadFile(string path);
     }
 }
