@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 
 namespace PhotoImporter._Dependencies {
     public class Filesystem : IFilesystem {
@@ -20,6 +21,27 @@ namespace PhotoImporter._Dependencies {
             }
 
             return hashString;
+        }
+
+        public DateTime? GetImageTakenDate(string path) {
+            IExifValue<string> rawExifDate = null;
+            DateTime parsedDate;
+            DateTime? result = null;
+
+            using (var image = Image.Load(path)) {
+                image.Metadata.ExifProfile.TryGetValue(ExifTag.DateTimeOriginal, out rawExifDate);
+            }
+
+            if (rawExifDate != null)
+                if (DateTime.TryParse(rawExifDate.Value, out parsedDate))
+                    result = parsedDate;
+
+            return result;
+        }
+
+        public DateTime GetFileCreatedDate(string path)
+        {
+            return File.GetCreationTime(path);
         }
     }
 }

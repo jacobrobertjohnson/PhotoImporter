@@ -13,6 +13,8 @@ public class SqliteLibraryManagerTests : _TestBase {
         FILE_HASH = "The MD5",
         HASH_LOOKUP_QUERY = $"SELECT 1 FROM Photos WHERE Hash = '{FILE_HASH}'";
 
+    readonly DateTime DATE_TAKEN = DateTime.Parse("2023-01-01");
+
     ISetup<ISqliteContext> _runQuery;
     ILibraryManager _libMan;
     
@@ -30,7 +32,7 @@ public class SqliteLibraryManagerTests : _TestBase {
 
     [TestMethod]
     public void Constructor_PhotosTableCreated() {
-        verifyRunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FilePath TEXT)");
+        verifyRunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FilePath TEXT, DateTaken TEXT)");
     }
 
     [TestMethod]
@@ -58,10 +60,10 @@ public class SqliteLibraryManagerTests : _TestBase {
     }
 
     [TestMethod]
-    public void AddFile_HashAndPathPassedIntoQuery() {
-        _libMan.AddFile(FILE_HASH, FILE_PATH);
+    public void AddFile_HashPathAndDatePassedIntoQuery() {
+        _libMan.AddFile(FILE_HASH, FILE_PATH, DATE_TAKEN);
 
-        verifyRunQuery($"INSERT INTO Photos (Hash, FilePath) VALUES({FILE_HASH}, {FILE_PATH})");
+        verifyRunQuery($"INSERT INTO Photos (Hash, FilePath, DateTaken) VALUES ('{FILE_HASH}', '{FILE_PATH}', '{DATE_TAKEN}')");
     }
 
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);
