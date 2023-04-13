@@ -39,9 +39,8 @@ namespace PhotoImporter._Dependencies {
             return result;
         }
 
-        public DateTime GetFileCreatedDate(string path)
-        {
-            return File.GetCreationTime(path);
-        }
+        public DateTime GetFileCreatedDate(string path) => File.GetCreationTime(path);
+
+        public void CopyFile(string source, string destination, bool overwrite) => File.Copy(source, destination, overwrite);
     }
 }

@@ -9,4 +9,5 @@ public interface IDependencyFactory {
     IPhotoProcessor GetPhotoProcessor();
     ISqliteContext GetSqliteContext();
     ILibraryManager GetLibraryManager();
+    IValueProvider GetValueProvider();
 }

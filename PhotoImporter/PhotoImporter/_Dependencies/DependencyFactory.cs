@@ -9,6 +9,7 @@ public class DependencyFactory : IDependencyFactory {
     IPhotoProcessor _photoProcessor;
     ISqliteContext _sqliteContext;
     ILibraryManager _libraryManager;
+    IValueProvider _valueProvider;
 
     public DependencyFactory()
     {
@@ -20,6 +21,7 @@ public class DependencyFactory : IDependencyFactory {
         _photoProcessor = new PhotoProcessor(this);
         _sqliteContext = new SqliteContext();
         _libraryManager = new SqliteLibraryManager(this);
+        _valueProvider = new ValueProvider();
     }
 
     public IConfigReader GetConfigReader() => _configReader;
@@ -30,4 +32,5 @@ public class DependencyFactory : IDependencyFactory {
     public IPhotoProcessor GetPhotoProcessor() => _photoProcessor;
     public ISqliteContext GetSqliteContext() => _sqliteContext;
     public ILibraryManager GetLibraryManager() => _libraryManager;
+    public IValueProvider GetValueProvider() => _valueProvider;
 }
