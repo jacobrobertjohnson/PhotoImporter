@@ -9,7 +9,8 @@ namespace PhotoImporter.Tests;
 
 [TestClass]
 public class SqliteLibraryManagerTests : _TestBase {
-    const string FILE_PATH = @"C:\fakepath\image.jpg",
+    const string ORIGINAL_FILENAME = "image.jpg",
+        FILE_PATH = @"C:\fakepath\" + ORIGINAL_FILENAME,
         FILE_HASH = "The MD5",
         HASH_LOOKUP_QUERY = $"SELECT 1 FROM Photos WHERE Hash = '{FILE_HASH}'";
 
@@ -32,7 +33,7 @@ public class SqliteLibraryManagerTests : _TestBase {
 
     [TestMethod]
     public void Constructor_PhotosTableCreated() {
-        verifyRunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FilePath TEXT, DateTaken TEXT)");
+        verifyRunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)");
     }
 
     [TestMethod]
@@ -61,9 +62,9 @@ public class SqliteLibraryManagerTests : _TestBase {
 
     [TestMethod]
     public void AddFile_HashPathAndDatePassedIntoQuery() {
-        _libMan.AddFile(FILE_HASH, FILE_PATH, DATE_TAKEN);
+        _libMan.AddFile(FILE_HASH, FILE_PATH, DATE_TAKEN, ORIGINAL_FILENAME);
 
-        verifyRunQuery($"INSERT INTO Photos (Hash, FilePath, DateTaken) VALUES ('{FILE_HASH}', '{FILE_PATH}', '{DATE_TAKEN}')");
+        verifyRunQuery($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{FILE_HASH}', '{FILE_PATH}', '{DATE_TAKEN}', '{ORIGINAL_FILENAME}')");
     }
 
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);

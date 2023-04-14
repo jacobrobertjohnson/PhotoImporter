@@ -10,4 +10,5 @@ public interface IDependencyFactory {
     ISqliteContext GetSqliteContext();
     ILibraryManager GetLibraryManager();
     IValueProvider GetValueProvider();
+    IPhotoVerifier GetPhotoVerifier();
 }

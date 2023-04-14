@@ -16,9 +16,12 @@ public abstract class _TestBase {
     protected Mock<ISqliteContext> _sqliteContext;
     protected Mock<ILibraryManager> _libraryManager;
     protected Mock<IValueProvider> _valueProvider;
+    protected Mock<IPhotoVerifier> _photoVerifier;
 
-    protected ISetup<IConsoleWriter> _writeLine;
-    protected List<string> _writeLineResults;
+    protected ISetup<IConsoleWriter> _writeLine,
+        _writeVerboseLine;
+    protected List<string> _writeLineResults,
+        _writeVerboseLineResults;
     
     protected int _index;
 
@@ -32,6 +35,7 @@ public abstract class _TestBase {
         _sqliteContext = new Mock<ISqliteContext>();
         _libraryManager = new Mock<ILibraryManager>();
         _valueProvider = new Mock<IValueProvider>();
+        _photoVerifier = new Mock<IPhotoVerifier>();
 
         _dependencies = new Mock<IDependencyFactory>();
         _dependencies.Setup(x => x.GetConsoleWriter()).Returns(_consoleWriter.Object);
@@ -43,16 +47,32 @@ public abstract class _TestBase {
         _dependencies.Setup(x => x.GetLibraryManager()).Returns(_libraryManager.Object);
         _dependencies.Setup(x => x.GetSqliteContext()).Returns(_sqliteContext.Object);
         _dependencies.Setup(x => x.GetValueProvider()).Returns(_valueProvider.Object);
+        _dependencies.Setup(x => x.GetPhotoVerifier()).Returns(_photoVerifier.Object);
 
         _writeLine = _consoleWriter.Setup(x => x.WriteLine(It.IsAny<string>()));
         _writeLineResults = new List<string>();
         _writeLine.Callback((string line) => _writeLineResults.Add(line));
 
+        _writeVerboseLine = _consoleWriter.Setup(x => x.WriteVerboseLine(It.IsAny<string>()));
+        _writeVerboseLineResults = new List<string>();
+        _writeVerboseLine.Callback((string line) => _writeVerboseLineResults.Add(line));
+
         _index = 0;
     }
 
-    protected void verifySingleMessage(string message) {
+    protected void verifySingleMessage(string message)
+        => verifySingleMessage(_writeLineResults, message);
+
+    protected void verifySingleMessageStartsWith(string message) {
         Assert.AreEqual(1, _writeLineResults.Count);
-        Assert.AreEqual(message, _writeLineResults[_index++]);
+        Assert.IsTrue(_writeLineResults[_index++].StartsWith(message));
+    }
+
+    protected void verifySingleVerboseMessage(string message)
+        => verifySingleMessage(_writeVerboseLineResults, message);
+
+    protected void verifySingleMessage(List<string> list, string message) {
+        Assert.AreEqual(1, list.Count);
+        Assert.AreEqual(message, list[_index++]);
     }
 }

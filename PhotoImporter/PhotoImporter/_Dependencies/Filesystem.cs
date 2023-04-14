@@ -5,10 +5,28 @@ namespace PhotoImporter._Dependencies {
     public class Filesystem : IFilesystem {
         public bool FileExists(string path) => File.Exists(path);
 
+        public void DeleteFile(string path) => File.Delete(path);
+
         public bool DirectoryExists(string path) => Directory.Exists(path);
 
-        public string[] GetFiles(string dirPath, string searchPattern)
-            => Directory.EnumerateFiles(dirPath, searchPattern).ToArray();
+        public void CreateDirectory(string path) => Directory.CreateDirectory(path);
+
+        public void DeleteDirectory(string path) => Directory.Delete(path);
+
+        public string[] GetFiles(string dirPath, string searchPattern) {
+            string[] acceptedExtensions = searchPattern
+                .ToLower()
+                .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                .Select(ext => "." + ext.Trim())
+                .ToArray();
+
+            return Directory.EnumerateFiles(dirPath, "*.*", new EnumerationOptions() {
+                    RecurseSubdirectories = true
+                })
+                .Where(file => acceptedExtensions.Length == 0
+                    || acceptedExtensions.Contains(Path.GetExtension(file).ToLower()))
+                .ToArray();
+        }
 
         public string GetFileHash(string path) {
             byte[] hashBytes;
@@ -29,7 +47,7 @@ namespace PhotoImporter._Dependencies {
             DateTime? result = null;
 
             using (var image = Image.Load(path)) {
-                image.Metadata.ExifProfile.TryGetValue(ExifTag.DateTimeOriginal, out rawExifDate);
+                image?.Metadata?.ExifProfile?.TryGetValue(ExifTag.DateTimeOriginal, out rawExifDate);
             }
 
             if (rawExifDate != null)

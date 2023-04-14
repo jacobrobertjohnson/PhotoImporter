@@ -26,7 +26,7 @@ public class MainTests : _TestBase {
 
         _runJob = _photoImporter.Setup(x => x.RunJob(It.IsAny<AppConfig>()));
 
-        Program.InjectDependencies(_dependencies.Object);
+        Program.DependencyFactory = _dependencies.Object;
     }
 
     [TestMethod]

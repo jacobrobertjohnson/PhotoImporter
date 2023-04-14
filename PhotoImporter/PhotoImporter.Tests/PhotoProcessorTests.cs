@@ -8,30 +8,43 @@ namespace PhotoImporter.Tests;
 
 [TestClass]
 public class PhotoProcessorTests : _TestBase {
-    const string FILE_PATH = "/fakepath/source/file.jpg",
+    const string ORIGINAL_FILENAME = "file.jpg",
+        DIRECTORY_PATH = "/fakepath/source",
+        FILE_PATH = DIRECTORY_PATH + "/" + ORIGINAL_FILENAME,
         RANDOM_GUID = "RandomGuid123",
         STORAGE_PATH = "/fakepath/dest/",
         FILE_HASH = "The MD5 Hash";
 
-    readonly DateTime ORIGINAL_DATE = DateTime.Parse("2023-01-01"),
+
+    static readonly DateTime ORIGINAL_DATE = DateTime.Parse("2023-01-01"),
         CREATED_DATE = DateTime.Parse("2023-02-02");
+
+    static readonly string DESTINATION_PATH = $"{STORAGE_PATH}{ORIGINAL_DATE:yyyy-MM}/{ORIGINAL_DATE:yyyy-MM-dd}_{RANDOM_GUID}.jpg";
 
     ISetup<ILibraryManager, bool> _fileAlreadyAdded;
     ISetup<ILibraryManager> _addFile;
 
     ISetup<IFilesystem, DateTime?> _getImageTakenDate;
     ISetup<IFilesystem, DateTime> _getFileCreatedDate;
-    ISetup<IFilesystem> _copyFile;
+    ISetup<IFilesystem, bool> _directoryExists;
+    ISetup<IFilesystem, string[]> _getFiles;
+    ISetup<IFilesystem> _copyFile,
+        _createDirectory,
+        _deleteFile,
+        _deleteDirectory;
+
+    ISetup<IPhotoVerifier, bool> _photoWasDelivered;
 
     IPhotoProcessor _processor;
 
     [TestInitialize]
     public void Setup() {
         _fileAlreadyAdded = _libraryManager.Setup(x => x.FileAlreadyAdded(It.IsAny<string>()));
-        _addFile = _libraryManager.Setup(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()));
+        _addFile = _libraryManager.Setup(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>()));
         
         _configReader.Setup(x => x.AppConfig).Returns(new AppConfig() {
-            StoragePath = STORAGE_PATH
+            StoragePath = STORAGE_PATH,
+            VerboseOutput = true
         });
 
         _valueProvider.Setup(x => x.MakeGuid()).Returns(RANDOM_GUID);
@@ -44,9 +57,29 @@ public class PhotoProcessorTests : _TestBase {
         _getFileCreatedDate = _filesystem.Setup(x => x.GetFileCreatedDate(It.IsAny<string>()));
         _getFileCreatedDate.Returns(CREATED_DATE);
 
+        _directoryExists = _filesystem.Setup(x => x.DirectoryExists(It.IsAny<string>()));
+
+        _createDirectory = _filesystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
+        _deleteFile = _filesystem.Setup(x => x.DeleteFile(It.IsAny<string>()));
+        _deleteDirectory = _filesystem.Setup(x => x.DeleteDirectory(It.IsAny<string>()));
+        _getFiles = _filesystem.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>()));
+
         _copyFile = _filesystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()));
 
+        _photoWasDelivered = _photoVerifier.Setup(x => x.PhotoWasDelivered(It.IsAny<string>(), It.IsAny<string>()));
+
         _processor = new PhotoProcessor(_dependencies.Object);
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileAlreadyAdded_ExceptionWritten() {
+        _fileAlreadyAdded.Callback((string hash) => {
+            throw new ArithmeticException("Test Exception");
+        });
+
+        processFile();
+
+        verifySingleMessageStartsWith($"An exception occurred while processing {FILE_PATH}:\nSystem.ArithmeticException: Test Exception");
     }
 
     [TestMethod]
@@ -55,7 +88,7 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        verifySingleMessage(FILE_PATH + " already exists in the photo library. It will not be added again.");
+        verifySingleVerboseMessage(FILE_PATH + " already exists in the photo library. It will not be added again.");
     }
 
     [TestMethod]
@@ -65,7 +98,7 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        _libraryManager.Verify(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>()), Times.Never);
+        _libraryManager.Verify(x => x.AddFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>()), Times.Never);
     }
 
     [TestMethod]
@@ -75,7 +108,7 @@ public class PhotoProcessorTests : _TestBase {
         
         processFile();
 
-        _libraryManager.Verify(x => x.AddFile(FILE_HASH, FILE_PATH, ORIGINAL_DATE), Times.Once);
+        _libraryManager.Verify(x => x.AddFile(FILE_HASH, RANDOM_GUID, ORIGINAL_DATE, ORIGINAL_FILENAME), Times.Once);
     }
 
     [TestMethod]
@@ -85,7 +118,7 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        _libraryManager.Verify(x => x.AddFile(FILE_HASH, FILE_PATH, ORIGINAL_DATE), Times.Once);
+        _libraryManager.Verify(x => x.AddFile(FILE_HASH, RANDOM_GUID, ORIGINAL_DATE, ORIGINAL_FILENAME), Times.Once);
     }
 
     [TestMethod]
@@ -96,11 +129,33 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        _libraryManager.Verify(x => x.AddFile(FILE_HASH, FILE_PATH, CREATED_DATE), Times.Once);
+        _libraryManager.Verify(x => x.AddFile(FILE_HASH, RANDOM_GUID, CREATED_DATE, ORIGINAL_FILENAME), Times.Once);
     }
 
     [TestMethod]
-    public void ProcessFile_FileAlreadyAdded_CopiedToDestination() {
+    public void ProcessFile_TargetDirectoryNotExists_Created() {
+        _fileAlreadyAdded.Returns(false);
+        _directoryExists.Returns(false);
+        _createDirectory.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.CreateDirectory($"{STORAGE_PATH}{ORIGINAL_DATE:yyyy-MM}"), Times.Once);
+    }
+
+    [TestMethod]
+    public void ProcessFile_TargetDirectoryExists_NotCreated() {
+        _fileAlreadyAdded.Returns(false);
+        _directoryExists.Returns(true);
+        _createDirectory.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileAlreadyAdded_NotCopiedToDestination() {
         _fileAlreadyAdded.Returns(true);
         _copyFile.Verifiable();
 
@@ -116,7 +171,73 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        _filesystem.Verify(x => x.CopyFile(FILE_PATH, $"{STORAGE_PATH}{ORIGINAL_DATE:yyyy-MM-dd}/{RANDOM_GUID}.jpg", true), Times.Once);
+        _filesystem.Verify(x => x.CopyFile(FILE_PATH, DESTINATION_PATH, true), Times.Once);
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileMoved_WrittenToConsole() {
+        _fileAlreadyAdded.Returns(false);
+
+        processFile();
+
+        verifySingleVerboseMessage($"{FILE_PATH} successfully moved to {DESTINATION_PATH}");
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileVerified_OriginalDeleted() {
+        _fileAlreadyAdded.Returns(false);
+        _photoWasDelivered.Returns(true);
+        _deleteFile.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteFile(FILE_PATH), Times.Once);
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileNotVerified_OriginalNotDeleted() {
+        _fileAlreadyAdded.Returns(false);
+        _photoWasDelivered.Returns(false);
+        _deleteFile.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteFile(FILE_PATH), Times.Never);
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileNotVerified_DirectoryNotDeleted() {
+        _fileAlreadyAdded.Returns(false);
+        _photoWasDelivered.Returns(false);
+        _deleteDirectory.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteDirectory(DIRECTORY_PATH), Times.Never);
+    }
+
+    [TestMethod]
+    public void ProcessFile_DirectoryNotEmpty_DirectoryNotDeleted() {
+        _fileAlreadyAdded.Returns(false);
+        _photoWasDelivered.Returns(true);
+        _getFiles.Returns(new string[] { "file1", "file2" });
+        _deleteDirectory.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteDirectory(DIRECTORY_PATH), Times.Never);
+    }
+
+    [TestMethod]
+    public void ProcessFile_DirectoryEmpty_DirectoryDeleted() {
+        _fileAlreadyAdded.Returns(false);
+        _photoWasDelivered.Returns(true);
+        _getFiles.Returns(new string[0]);
+        _deleteDirectory.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteDirectory(DIRECTORY_PATH), Times.Once);
     }
 
     void processFile() => _processor.ProcessFile(FILE_PATH);

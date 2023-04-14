@@ -75,5 +75,19 @@ public class PhotoImporterTests : _TestBase {
         _photoProcessor.Verify(x => x.ProcessFile("/fakepath/file2.jpg"), Times.Once);
     }
 
+    [TestMethod]
+    public void RunJob_FileLookupResultsLogged() {
+        _directoryExists.Returns(true);
+        _getFiles.Returns(new [] {
+            "/fakepath/file1.jpg",
+            "/fakepath/file2.jpg",
+        });
+        _processFile.Verifiable();
+
+        runJob();
+
+        verifySingleMessage("2 files were found in /fakepath/imagesource using wildcard *.rar\n");
+    }
+
     void runJob() => _importer.RunJob(_config);
 } 

@@ -22,7 +22,11 @@ namespace PhotoImporter {
 
         void findAndProcessFiles(AppConfig config)
         {
-            foreach (string file in _filesystem.GetFiles(config.SourceDir, config.SourceFilePattern))
+            string[] files = _filesystem.GetFiles(config.SourceDir, config.SourceFilePattern);
+
+            _messenger.FilesWereFound(config, files);
+
+            foreach (string file in files)
                 _photoProcessor.ProcessFile(file);
         }
     }
