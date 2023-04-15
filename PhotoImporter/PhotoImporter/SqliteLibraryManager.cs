@@ -37,4 +37,14 @@ public class SqliteLibraryManager : ILibraryManager {
     public void DeleteFile(string hash) {
         _context.RunQuery($"DELETE FROM Photos WHERE Hash = '{hash}'");
     }
+
+    public bool ImportIsRunning() {
+        bool importIsRunning = false;
+
+        _context.RunQuery("SELECT 1 FROM AppState WHERE ImportIsRunning = 1", (reader) => {
+            importIsRunning = true;
+        });
+
+        return importIsRunning;
+    }
 }

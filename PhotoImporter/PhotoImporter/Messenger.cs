@@ -25,6 +25,9 @@ namespace PhotoImporter {
         public void SourceDirectoryDoesntExist()
             => _consoleWriter.WriteLine("Source directory doesn't exist.");
 
+        internal void AnotherProcessRunning()
+            => _consoleWriter.WriteLine("Another import process is already running. This process will not continue.");
+
         internal void FileAlreadyInLibrary(string path)
             => _consoleWriter.WriteVerboseLine($"{path} already exists in the photo library. It will not be added again.");
 

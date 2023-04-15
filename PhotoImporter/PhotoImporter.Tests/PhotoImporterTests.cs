@@ -14,12 +14,14 @@ public class PhotoImporterTests : _TestBase {
     ISetup<IFilesystem, bool> _directoryExists;
     ISetup<IFilesystem, string[]> _getFiles;
     ISetup<IPhotoProcessor> _processFile;
+    ISetup<ILibraryManager, bool> _importIsRunning;
 
     [TestInitialize]
     public void Setup() {
         _directoryExists = _filesystem.Setup(x => x.DirectoryExists(It.IsAny<string>()));
         _getFiles = _filesystem.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>()));
         _processFile = _photoProcessor.Setup(x => x.ProcessFile(It.IsAny<string>()));
+        _importIsRunning = _libraryManager.Setup(x => x.ImportIsRunning());
 
         _config = new AppConfig()
         {
@@ -40,6 +42,16 @@ public class PhotoImporterTests : _TestBase {
     }
 
     [TestMethod]
+    public void RunJob_SourceFolderDoesntExist_ImportRunningNotChecked() {
+        _directoryExists.Returns(false);
+        _importIsRunning.Verifiable();
+
+        runJob();
+
+        _libraryManager.Verify(x => x.ImportIsRunning(), Times.Never);
+    }
+
+    [TestMethod]
     public void RunJob_SourceFolderDoesntExist_FilesNotRead() {
         _directoryExists.Returns(false);
         _getFiles.Verifiable();
@@ -50,8 +62,40 @@ public class PhotoImporterTests : _TestBase {
     }
 
     [TestMethod]
-    public void RunJob_SourceFolderExists_FilesRead() {
+    public void RunJob_SourceFolderExists_ImportRunningChecked() {
         _directoryExists.Returns(true);
+        _importIsRunning.Verifiable();
+
+        runJob();
+
+        _libraryManager.Verify(x => x.ImportIsRunning(), Times.Once);
+    }
+
+    [TestMethod]
+    public void RunJob_ImportIsRunning_FilesNotRead() {
+        _directoryExists.Returns(true);
+        _importIsRunning.Returns(true);
+        _getFiles.Verifiable();
+
+        runJob();
+
+        _filesystem.Verify(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [TestMethod]
+    public void RunJob_ImportIsRunning_MessageReturned() {
+        _directoryExists.Returns(true);
+        _importIsRunning.Returns(true);
+
+        runJob();
+
+        verifySingleMessage("Another import process is already running. This process will not continue.");
+    }
+
+    [TestMethod]
+    public void RunJob_SourceFolderExistsAndImportNotRunning_FilesRead() {
+        _directoryExists.Returns(true);
+        _importIsRunning.Returns(false);
         _getFiles.Verifiable();
 
         runJob();

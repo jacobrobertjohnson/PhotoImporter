@@ -77,6 +77,22 @@ public class SqliteLibraryManagerTests : _TestBase {
         verifyRunQueryNoOutput($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{FILE_HASH}', '{FILE_PATH}', '{DATE_TAKEN}', '{ORIGINAL_FILENAME}')");
     }
 
+    [TestMethod]
+    public void ImportIsRunning_RecordFound_TrueReturned() {
+        _runQuery.Callback((string query, Action<SqliteDataReader> onRun) => {
+            onRun(null);
+        });
+
+        Assert.IsTrue(_libMan.ImportIsRunning());
+    }
+
+    [TestMethod]
+    public void ImportIsRunning_RecordNotFound_FalseReturned() {
+        _runQuery.Callback((string query, Action<SqliteDataReader> onRun) => { });
+
+        Assert.IsFalse(_libMan.ImportIsRunning());
+    }
+
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);
 
     void verifyRunQueryNoOutput(string query) => _sqliteContext.Verify(x => x.RunQuery(query), Times.Once);
