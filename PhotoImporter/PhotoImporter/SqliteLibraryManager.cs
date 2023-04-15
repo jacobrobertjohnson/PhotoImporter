@@ -17,6 +17,7 @@ public class SqliteLibraryManager : ILibraryManager {
     void buildDatabaseStructure() {
         _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)");
         _context.RunQuery("CREATE TABLE IF NOT EXISTS AppState (ImportIsRunning INT)");
+        _context.RunQuery("INSERT INTO AppState (ImportIsRunning) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM AppState)");
     }
 
     public bool FileAlreadyAdded(string hash) {

@@ -42,6 +42,11 @@ public class SqliteLibraryManagerTests : _TestBase {
     }
 
     [TestMethod]
+    public void Constructor_AppStateTablePopulated() {
+        verifyRunQueryNoOutput("INSERT INTO AppState (ImportIsRunning) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM AppState)");
+    }
+
+    [TestMethod]
     public void FileAlreadyAdded_HashPassedIntoQuery() {
         _libMan.FileAlreadyAdded(FILE_HASH);
 
