@@ -33,7 +33,12 @@ public class SqliteLibraryManagerTests : _TestBase {
 
     [TestMethod]
     public void Constructor_PhotosTableCreated() {
-        verifyRunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)");
+        verifyRunQueryNoOutput("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)");
+    }
+
+    [TestMethod]
+    public void Constructor_AppStateTableCreated() {
+        verifyRunQueryNoOutput("CREATE TABLE IF NOT EXISTS AppState (ImportIsRunning INT)");
     }
 
     [TestMethod]
@@ -64,8 +69,10 @@ public class SqliteLibraryManagerTests : _TestBase {
     public void AddFile_HashPathAndDatePassedIntoQuery() {
         _libMan.AddFile(FILE_HASH, FILE_PATH, DATE_TAKEN, ORIGINAL_FILENAME);
 
-        verifyRunQuery($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{FILE_HASH}', '{FILE_PATH}', '{DATE_TAKEN}', '{ORIGINAL_FILENAME}')");
+        verifyRunQueryNoOutput($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{FILE_HASH}', '{FILE_PATH}', '{DATE_TAKEN}', '{ORIGINAL_FILENAME}')");
     }
 
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);
+
+    void verifyRunQueryNoOutput(string query) => _sqliteContext.Verify(x => x.RunQuery(query), Times.Once);
 }

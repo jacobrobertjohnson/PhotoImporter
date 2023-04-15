@@ -15,7 +15,8 @@ public class SqliteLibraryManager : ILibraryManager {
     }
 
     void buildDatabaseStructure() {
-        _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)", noQuery);
+        _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)");
+        _context.RunQuery("CREATE TABLE IF NOT EXISTS AppState (ImportIsRunning INT)");
     }
 
     public bool FileAlreadyAdded(string hash) {
@@ -29,12 +30,10 @@ public class SqliteLibraryManager : ILibraryManager {
     }
 
     public void AddFile(string hash, string fileId, DateTime dateTaken, string originalFilename) {
-        _context.RunQuery($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{hash}', '{fileId}', '{dateTaken}', '{originalFilename}')", noQuery);
+        _context.RunQuery($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{hash}', '{fileId}', '{dateTaken}', '{originalFilename}')");
     }
 
     public void DeleteFile(string hash) {
-        _context.RunQuery($"DELETE FROM Photos WHERE Hash = '{hash}'", noQuery);
+        _context.RunQuery($"DELETE FROM Photos WHERE Hash = '{hash}'");
     }
-
-    void noQuery(SqliteDataReader reader) { }
 }

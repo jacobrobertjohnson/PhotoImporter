@@ -9,6 +9,9 @@ public class SqliteContext : ISqliteContext {
     {
         _config = factory.GetConfigReader().AppConfig;
     }
+
+    public void RunQuery(string query) => RunQuery(query, (reader) => { });
+
     public void RunQuery(string query, Action<SqliteDataReader> onRun) {
         using (SqliteConnection connection = new SqliteConnection($"Data Source={_config.DatabasePath}")) {
             connection.Open();
