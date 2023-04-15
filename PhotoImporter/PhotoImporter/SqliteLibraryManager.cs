@@ -49,6 +49,6 @@ public class SqliteLibraryManager : ILibraryManager {
     }
 
     public void SetImportRunning(int isRunning) {
-        _context.RunQuery($"UPDATE AppSet SET ImportIsRunning = {isRunning}");
+        _context.RunQuery($"UPDATE AppState SET ImportIsRunning = {isRunning}");
     }
 }

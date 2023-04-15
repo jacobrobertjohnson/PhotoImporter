@@ -20,8 +20,13 @@ namespace PhotoImporter {
                 _messenger.SourceDirectoryDoesntExist();
             else if (_libraryManager.ImportIsRunning())
                 _messenger.AnotherProcessRunning();
-            else
+            else {
+                _libraryManager.SetImportRunning(1);
+
                 findAndProcessFiles(config);
+
+                _libraryManager.SetImportRunning(0);
+            }
         }
 
         void findAndProcessFiles(AppConfig config)

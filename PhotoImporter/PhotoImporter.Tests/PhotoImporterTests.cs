@@ -15,6 +15,7 @@ public class PhotoImporterTests : _TestBase {
     ISetup<IFilesystem, string[]> _getFiles;
     ISetup<IPhotoProcessor> _processFile;
     ISetup<ILibraryManager, bool> _importIsRunning;
+    ISetup<ILibraryManager> _setImportRunning;
 
     [TestInitialize]
     public void Setup() {
@@ -22,6 +23,7 @@ public class PhotoImporterTests : _TestBase {
         _getFiles = _filesystem.Setup(x => x.GetFiles(It.IsAny<string>(), It.IsAny<string>()));
         _processFile = _photoProcessor.Setup(x => x.ProcessFile(It.IsAny<string>()));
         _importIsRunning = _libraryManager.Setup(x => x.ImportIsRunning());
+        _setImportRunning = _libraryManager.Setup(x => x.SetImportRunning(It.IsAny<int>()));
 
         _config = new AppConfig()
         {
@@ -62,6 +64,16 @@ public class PhotoImporterTests : _TestBase {
     }
 
     [TestMethod]
+    public void RunJob_SourceFolderDoesntExist_ImportNotSetAsRunning() {
+        _directoryExists.Returns(false);
+        _setImportRunning.Verifiable();
+
+        runJob();
+
+        _libraryManager.Verify(x => x.SetImportRunning(It.IsAny<int>()), Times.Never);
+    }
+
+    [TestMethod]
     public void RunJob_SourceFolderExists_ImportRunningChecked() {
         _directoryExists.Returns(true);
         _importIsRunning.Verifiable();
@@ -83,6 +95,17 @@ public class PhotoImporterTests : _TestBase {
     }
 
     [TestMethod]
+    public void RunJob_ImportIsRunning_ImportNotSetAsRunning() {
+        _directoryExists.Returns(true);
+        _importIsRunning.Returns(true);
+        _setImportRunning.Verifiable();
+
+        runJob();
+
+        _libraryManager.Verify(x => x.SetImportRunning(It.IsAny<int>()), Times.Never);
+    }
+
+    [TestMethod]
     public void RunJob_ImportIsRunning_MessageReturned() {
         _directoryExists.Returns(true);
         _importIsRunning.Returns(true);
@@ -90,6 +113,17 @@ public class PhotoImporterTests : _TestBase {
         runJob();
 
         verifySingleMessage("Another import process is already running. This process will not continue.");
+    }
+
+    [TestMethod]
+    public void RunJob_SourceFolderExistsAndImportNotRunning_ImportSetAsRunning() {
+        _directoryExists.Returns(true);
+        _importIsRunning.Returns(false);
+        _setImportRunning.Verifiable();
+
+        runJob();
+
+        _libraryManager.Verify(x => x.SetImportRunning(1), Times.Once);
     }
 
     [TestMethod]
@@ -131,6 +165,17 @@ public class PhotoImporterTests : _TestBase {
         runJob();
 
         verifySingleMessage("2 files were found in /fakepath/imagesource using wildcard *.rar\n");
+    }
+
+    [TestMethod]
+    public void RunJob_SourceFolderExistsAndImportNotRunning_ImportSetAsNotRunning() {
+        _directoryExists.Returns(true);
+        _importIsRunning.Returns(false);
+        _setImportRunning.Verifiable();
+
+        runJob();
+
+        _libraryManager.Verify(x => x.SetImportRunning(0), Times.Once);
     }
 
     void runJob() => _importer.RunJob(_config);
