@@ -93,6 +93,15 @@ public class SqliteLibraryManagerTests : _TestBase {
         Assert.IsFalse(_libMan.ImportIsRunning());
     }
 
+    [TestMethod]
+    [DataRow(1)]
+    [DataRow(0)]
+    public void SetImportRunning(int isRunning) {
+        _libMan.SetImportRunning(isRunning);
+
+        verifyRunQueryNoOutput($"UPDATE AppSet SET ImportIsRunning = {isRunning}");
+    }
+
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);
 
     void verifyRunQueryNoOutput(string query) => _sqliteContext.Verify(x => x.RunQuery(query), Times.Once);

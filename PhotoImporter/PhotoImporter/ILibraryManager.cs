@@ -5,4 +5,5 @@ public interface ILibraryManager {
     void AddFile(string hash, string fileId, DateTime dateTaken, string originalFilename);
     void DeleteFile(string hash);
     bool ImportIsRunning();
+    void SetImportRunning(int isRunning);
 }
