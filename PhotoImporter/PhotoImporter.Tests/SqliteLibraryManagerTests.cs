@@ -78,6 +78,13 @@ public class SqliteLibraryManagerTests : _TestBase {
     }
 
     [TestMethod]
+    public void AddFile_OriginalFileNameHasSingleQuotesEscaped() {
+        _libMan.AddFile(FILE_HASH, FILE_PATH, DATE_TAKEN, "/path/with/apostrophe's/in/it's/path/");
+
+        verifyRunQueryNoOutput($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{FILE_HASH}', '{FILE_PATH}', '{DATE_TAKEN}', '/path/with/apostrophe''s/in/it''s/path/')");
+    }
+
+    [TestMethod]
     public void ImportIsRunning_RecordFound_TrueReturned() {
         _runQuery.Callback((string query, Action<SqliteDataReader> onRun) => {
             onRun(null);

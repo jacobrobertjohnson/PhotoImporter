@@ -31,7 +31,9 @@ public class SqliteLibraryManager : ILibraryManager {
     }
 
     public void AddFile(string hash, string fileId, DateTime dateTaken, string originalFilename) {
-        _context.RunQuery($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{hash}', '{fileId}', '{dateTaken}', '{originalFilename}')");
+        string escapedOriginalFilename = originalFilename.Replace("'", "''");
+
+        _context.RunQuery($"INSERT INTO Photos (Hash, FileId, DateTaken, OriginalFilename) VALUES ('{hash}', '{fileId}', '{dateTaken}', '{escapedOriginalFilename}')");
     }
 
     public void DeleteFile(string hash) {
