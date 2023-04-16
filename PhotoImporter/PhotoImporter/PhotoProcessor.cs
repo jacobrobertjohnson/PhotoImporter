@@ -30,9 +30,10 @@ public class PhotoProcessor : IPhotoProcessor {
     void processFile(string path) {
         string hash = _filesystem.GetFileHash(path);
 
-        if (_libraryManager.FileAlreadyAdded(hash))
+        if (_libraryManager.FileAlreadyAdded(hash)) {
             _messenger.FileAlreadyInLibrary(path);
-        else {
+            clearSourceFile(path);
+        } else {
             addFileToLibrary(hash, path);
         }
     }
@@ -75,10 +76,13 @@ public class PhotoProcessor : IPhotoProcessor {
 
     void verifyCopyAndDeleteOriginal(string hash, string path)
     {
-        if (_photoVerifier.PhotoWasDelivered(hash, path)) {
-            _filesystem.DeleteFile(path);
-            deleteParentDirectoryIfEmpty(path);
-        }
+        if (_photoVerifier.PhotoWasDelivered(hash, path))
+            clearSourceFile(path);
+    }
+
+    void clearSourceFile(string path) {
+        _filesystem.DeleteFile(path);
+        deleteParentDirectoryIfEmpty(path);
     }
 
     void deleteParentDirectoryIfEmpty(string path) {

@@ -102,6 +102,38 @@ public class PhotoProcessorTests : _TestBase {
     }
 
     [TestMethod]
+    public void ProcessFile_FileAlreadyAdded_FileDeleted() {
+        _fileAlreadyAdded.Returns(true);
+        _deleteFile.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteFile(FILE_PATH), Times.Once);
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileAlreadyAddedAndDirectoryIsEmpty_DirectoryDeleted() {
+        _fileAlreadyAdded.Returns(true);
+        _getFiles.Returns(new string[0]);
+        _deleteFile.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteDirectory(DIRECTORY_PATH), Times.Once);
+    }
+
+    [TestMethod]
+    public void ProcessFile_FileAlreadyAddedAndDirectoryNotEmpty_DirectoryNotDeleted() {
+        _fileAlreadyAdded.Returns(true);
+        _getFiles.Returns(new string[] { "/fakepath/image.jpg" });
+        _deleteFile.Verifiable();
+
+        processFile();
+
+        _filesystem.Verify(x => x.DeleteDirectory(DIRECTORY_PATH), Times.Never);
+    }
+
+    [TestMethod]
     public void ProcessFile_FileNotAlreadyAdded_AddedToAvoidFutureDuplicates() {
         _fileAlreadyAdded.Returns(false);
         _addFile.Verifiable();
