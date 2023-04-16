@@ -9,7 +9,8 @@ namespace PhotoImporter.Tests;
 [TestClass]
 public class PhotoProcessorTests : _TestBase {
     const string ORIGINAL_FILENAME = "file.jpg",
-        DIRECTORY_PATH = "/fakepath/source",
+        SOURCE_PATH = "/fakepath/source",
+        DIRECTORY_PATH = SOURCE_PATH + "/subdir1",
         FILE_PATH = DIRECTORY_PATH + "/" + ORIGINAL_FILENAME,
         RANDOM_GUID = "RandomGuid123",
         STORAGE_PATH = "/fakepath/dest/",
@@ -44,6 +45,7 @@ public class PhotoProcessorTests : _TestBase {
         
         _configReader.Setup(x => x.AppConfig).Returns(new AppConfig() {
             StoragePath = STORAGE_PATH,
+            SourceDir = SOURCE_PATH,
             VerboseOutput = true
         });
 
@@ -261,6 +263,18 @@ public class PhotoProcessorTests : _TestBase {
     }
 
     [TestMethod]
+    public void ProcessFile_DirectoryIsInImporterPath_DirectoryNotDeleted() {
+        _fileAlreadyAdded.Returns(false);
+        _photoWasDelivered.Returns(true);
+        _getFiles.Returns(new string[0]);
+        _deleteDirectory.Verifiable();
+
+        processFile(SOURCE_PATH + "/" + ORIGINAL_FILENAME);
+
+        _filesystem.Verify(x => x.DeleteDirectory(SOURCE_PATH), Times.Never);
+    }
+
+    [TestMethod]
     public void ProcessFile_DirectoryEmpty_DirectoryDeleted() {
         _fileAlreadyAdded.Returns(false);
         _photoWasDelivered.Returns(true);
@@ -272,5 +286,5 @@ public class PhotoProcessorTests : _TestBase {
         _filesystem.Verify(x => x.DeleteDirectory(DIRECTORY_PATH), Times.Once);
     }
 
-    void processFile() => _processor.ProcessFile(FILE_PATH);
+    void processFile(string path = null) => _processor.ProcessFile(path ?? FILE_PATH);
 }

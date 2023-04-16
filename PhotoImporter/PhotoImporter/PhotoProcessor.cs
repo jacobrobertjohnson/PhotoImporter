@@ -88,7 +88,14 @@ public class PhotoProcessor : IPhotoProcessor {
     void deleteParentDirectoryIfEmpty(string path) {
         string dirPath = Path.GetDirectoryName(path);
 
-        if (_filesystem.GetFiles(dirPath, "").Length == 0)
+        if (!isImporterDirectory(dirPath) && _filesystem.GetFiles(dirPath, "").Length == 0)
             _filesystem.DeleteDirectory(dirPath);
+    }
+
+    bool isImporterDirectory(string dirPath) {
+        string trimmedDirPath = Path.TrimEndingDirectorySeparator(dirPath).ToLower(),
+            trimmedImporterDirectory = Path.TrimEndingDirectorySeparator(_config.SourceDir).ToLower();
+
+        return trimmedImporterDirectory.Contains(trimmedDirPath);
     }
 }
