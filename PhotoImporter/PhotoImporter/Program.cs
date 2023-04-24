@@ -1,6 +1,4 @@
-﻿using PhotoImporter._Dependencies;
-
-namespace PhotoImporter {
+﻿namespace PhotoImporter {
     public class Program {
         public static IDependencyFactory DependencyFactory { get; set; } = new DependencyFactory();
         public static void Main(string[] args) {

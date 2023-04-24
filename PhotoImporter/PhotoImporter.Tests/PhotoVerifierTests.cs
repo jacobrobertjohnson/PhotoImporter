@@ -1,8 +1,3 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Language.Flow;
-using PhotoImporter._Dependencies;
-
 namespace PhotoImporter.Tests;
 
 [TestClass]

@@ -1,10 +1,3 @@
-using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Language.Flow;
-using Microsoft.Data.Sqlite;
-
-
 namespace PhotoImporter.Tests;
 
 [TestClass]

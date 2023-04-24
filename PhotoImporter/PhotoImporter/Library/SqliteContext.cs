@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
-using PhotoImporter;
-using PhotoImporter._Dependencies;
+
+namespace PhotoImporter.Library;
 
 public class SqliteContext : ISqliteContext {
     AppConfig _config;

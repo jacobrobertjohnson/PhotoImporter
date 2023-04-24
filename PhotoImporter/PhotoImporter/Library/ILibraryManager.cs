@@ -1,4 +1,4 @@
-namespace PhotoImporter;
+namespace PhotoImporter.Library;
 
 public interface ILibraryManager {
     bool FileAlreadyAdded(string hash);

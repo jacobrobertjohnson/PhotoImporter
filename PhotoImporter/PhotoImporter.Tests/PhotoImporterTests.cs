@@ -1,15 +1,10 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using Moq.Language.Flow;
-using PhotoImporter._Dependencies;
-
 namespace PhotoImporter.Tests;
 
 [TestClass]
 public class PhotoImporterTests : _TestBase {
     AppConfig _config;
 
-    PhotoImporter _importer;
+    IPhotoImporter _importer;
 
     ISetup<IFilesystem, bool> _directoryExists;
     ISetup<IFilesystem, string[]> _getFiles;
@@ -31,7 +26,7 @@ public class PhotoImporterTests : _TestBase {
             SourceFilePattern = "*.rar"
         };
 
-        _importer = new PhotoImporter(_dependencies.Object);
+        _importer = new Photos.PhotoImporter(_dependencies.Object);
     }
 
     [TestMethod]

@@ -1,4 +1,4 @@
-namespace PhotoImporter._Dependencies;
+namespace PhotoImporter.DependencyInjection;
 
 public interface IDependencyFactory {
     IConfigReader GetConfigReader();

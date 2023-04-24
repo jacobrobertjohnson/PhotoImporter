@@ -1,0 +1,12 @@
+global using Microsoft.Data.Sqlite;
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
+global using Moq;
+global using Moq.Language.Flow;
+global using PhotoImporter.Configuration;
+global using PhotoImporter.ConsoleIntegration;
+global using PhotoImporter.DependencyInjection;
+global using PhotoImporter.Filesystem;
+global using PhotoImporter.Library;
+global using PhotoImporter.Photos;
+global using System;
+global using System.Collections.Generic;

@@ -1,4 +1,4 @@
-namespace PhotoImporter._Dependencies;
+namespace PhotoImporter.DependencyInjection;
 
 public class DependencyFactory : IDependencyFactory {
     IConfigReader _configReader = null;
@@ -28,7 +28,7 @@ public class DependencyFactory : IDependencyFactory {
 
     public IFilesystem GetFilesystem() {
         if (_filesystem == null)
-            _filesystem = new Filesystem();
+            _filesystem = new Filesystem.Filesystem();
 
         return _filesystem;
     }
@@ -42,7 +42,7 @@ public class DependencyFactory : IDependencyFactory {
 
     public IPhotoImporter GetPhotoImporter()  {
         if (_photoImporter == null)
-            _photoImporter = new PhotoImporter(this);
+            _photoImporter = new Photos.PhotoImporter(this);
         
         return _photoImporter;
     }

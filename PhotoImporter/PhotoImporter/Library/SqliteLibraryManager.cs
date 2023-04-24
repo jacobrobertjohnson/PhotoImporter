@@ -1,7 +1,4 @@
-using Microsoft.Data.Sqlite;
-using PhotoImporter._Dependencies;
-
-namespace PhotoImporter;
+namespace PhotoImporter.Library;
 
 public class SqliteLibraryManager : ILibraryManager {
     ISqliteContext _context;

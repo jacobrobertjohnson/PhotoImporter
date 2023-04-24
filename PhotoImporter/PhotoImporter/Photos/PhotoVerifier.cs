@@ -1,6 +1,4 @@
-using PhotoImporter._Dependencies;
-
-namespace PhotoImporter;
+namespace PhotoImporter.Photos;
 
 public class PhotoVerifier : IPhotoVerifier {
     IFilesystem _filesystem;
