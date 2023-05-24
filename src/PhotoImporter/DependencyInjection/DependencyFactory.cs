@@ -12,6 +12,7 @@ public class DependencyFactory : IDependencyFactory {
     IValueProvider _valueProvider = null;
     IPhotoVerifier _photoVerifier = null;
     IThumbnailGenerator _thumbnailGenerator = null;
+    IThumbnailCache _thumbnailCache = null;
 
     public IConfigReader GetConfigReader() {
         if (_configReader == null)
@@ -88,5 +89,12 @@ public class DependencyFactory : IDependencyFactory {
             _thumbnailGenerator = new ThumbnailGenerator(this);
         
         return _thumbnailGenerator;
+    }
+
+    public IThumbnailCache GetThumbnailCache() {
+        if (_thumbnailCache == null)
+            _thumbnailCache = new ThumbnailCache(this);
+        
+        return _thumbnailCache;
     }
 }

@@ -17,7 +17,7 @@
                     messenger.ConfigFileNotValid();
                 else {
                     DependencyFactory.GetPhotoImporter().RunJob(configReader.AppConfig);
-                    DependencyFactory.GetThumbnailGenerator().MakeThumbnails(configReader.AppConfig);
+                    DependencyFactory.GetThumbnailGenerator().MakeThumbnails();
                 }
             }
         }

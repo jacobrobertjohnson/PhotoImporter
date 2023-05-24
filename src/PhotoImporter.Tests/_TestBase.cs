@@ -12,6 +12,7 @@ public abstract class _TestBase {
     protected Mock<IValueProvider> _valueProvider;
     protected Mock<IPhotoVerifier> _photoVerifier;
     protected Mock<IThumbnailGenerator> _thumbnailGenerator;
+    protected Mock<IThumbnailCache> _thumbnailCache;
 
     protected ISetup<IConsoleWriter> _writeLine,
         _writeVerboseLine;
@@ -32,6 +33,7 @@ public abstract class _TestBase {
         _valueProvider = new Mock<IValueProvider>();
         _photoVerifier = new Mock<IPhotoVerifier>();
         _thumbnailGenerator = new Mock<IThumbnailGenerator>();
+        _thumbnailCache = new Mock<IThumbnailCache>();
 
         _dependencies = new Mock<IDependencyFactory>();
         _dependencies.Setup(x => x.GetConsoleWriter()).Returns(_consoleWriter.Object);
@@ -45,6 +47,7 @@ public abstract class _TestBase {
         _dependencies.Setup(x => x.GetValueProvider()).Returns(_valueProvider.Object);
         _dependencies.Setup(x => x.GetPhotoVerifier()).Returns(_photoVerifier.Object);
         _dependencies.Setup(x => x.GetThumbnailGenerator()).Returns(_thumbnailGenerator.Object);
+        _dependencies.Setup(x => x.GetThumbnailCache()).Returns(_thumbnailCache.Object);
 
         _writeLine = _consoleWriter.Setup(x => x.WriteLine(It.IsAny<string>()));
         _writeLineResults = new List<string>();

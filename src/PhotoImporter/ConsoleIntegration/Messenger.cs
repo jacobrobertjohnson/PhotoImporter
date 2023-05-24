@@ -36,6 +36,10 @@ public class Messenger {
     internal void ExceptionOccurredInProcessFile(string path, Exception e)
         => _consoleWriter.WriteLine($"An exception occurred while processing {path}:\n{e}");
 
+    internal void ExceptionOccurredInThumbnailGeneration(string photoId, Exception e)
+        => _consoleWriter.WriteLine($"An exception occurred while generating thumbnails for photo {photoId}:\n{e}");
+
+
     internal void FileCopied(string sourcePath, string targetPath)
         => _consoleWriter.WriteVerboseLine($"{sourcePath} successfully moved to {targetPath}");
 }
