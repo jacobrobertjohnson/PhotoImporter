@@ -11,6 +11,7 @@ public class DependencyFactory : IDependencyFactory {
     ILibraryManager _libraryManager = null;
     IValueProvider _valueProvider = null;
     IPhotoVerifier _photoVerifier = null;
+    IThumbnailGenerator _thumbnailGenerator = null;
 
     public IConfigReader GetConfigReader() {
         if (_configReader == null)
@@ -80,5 +81,12 @@ public class DependencyFactory : IDependencyFactory {
             _photoVerifier = new PhotoVerifier(this);
         
         return _photoVerifier;
+    }
+
+    public IThumbnailGenerator GetThumbnailGenerator() {
+        if (_thumbnailGenerator == null)
+            _thumbnailGenerator = new ThumbnailGenerator(this);
+        
+        return _thumbnailGenerator;
     }
 }

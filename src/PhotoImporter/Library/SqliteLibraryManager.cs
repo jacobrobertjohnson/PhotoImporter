@@ -15,6 +15,10 @@ public class SqliteLibraryManager : ILibraryManager {
         _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)");
         _context.RunQuery("CREATE TABLE IF NOT EXISTS AppState (ImportIsRunning INT)");
         _context.RunQuery("INSERT INTO AppState (ImportIsRunning) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM AppState)");
+
+        try {
+            _context.RunQuery("ALTER TABLE Photos ADD COLUMN ThumbnailGenerated INT DEFAULT 0");
+        } catch { }
     }
 
     public bool FileAlreadyAdded(string hash) {
@@ -49,5 +53,12 @@ public class SqliteLibraryManager : ILibraryManager {
 
     public void SetImportRunning(int isRunning) {
         _context.RunQuery($"UPDATE AppState SET ImportIsRunning = {isRunning}");
+    }
+
+    public IEnumerable<PhotoWithoutThumbnail> GetPhotosWithoutThumbnails()
+    {
+        _context.RunQuery("SELECT * FROM Photos WHERE ThumbnailGenerated = 0");
+
+        return null;
     }
 }

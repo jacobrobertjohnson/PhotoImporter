@@ -8,5 +8,6 @@ global using PhotoImporter.DependencyInjection;
 global using PhotoImporter.Filesystem;
 global using PhotoImporter.Library;
 global using PhotoImporter.Photos;
+global using PhotoImporter.Thumbnails;
 global using System;
 global using System.Collections.Generic;

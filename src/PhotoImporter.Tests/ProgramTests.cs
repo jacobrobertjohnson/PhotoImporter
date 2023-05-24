@@ -9,6 +9,7 @@ public class MainTests : _TestBase {
     ISetup<IConfigReader, AppConfig> _appConfig;
     ISetup<IFilesystem, bool> _fileExists;
     ISetup<IPhotoImporter> _runJob;
+    ISetup<IThumbnailGenerator> _makeThumbnails;
 
     [TestInitialize]
     public void Setup() {  
@@ -19,6 +20,7 @@ public class MainTests : _TestBase {
         _fileExists = _filesystem.Setup(x => x.FileExists(It.IsAny<string>()));
 
         _runJob = _photoImporter.Setup(x => x.RunJob(It.IsAny<AppConfig>()));
+        _makeThumbnails = _thumbnailGenerator.Setup(x => x.MakeThumbnails(It.IsAny<AppConfig>()));
 
         Program.DependencyFactory = _dependencies.Object;
     }
@@ -68,7 +70,7 @@ public class MainTests : _TestBase {
     }
 
     [TestMethod]
-    public void Main_GoodConfig_JobStarted() {
+    public void Main_GoodConfig_PhotoJobStarted() {
         var config = new AppConfig();
 
         _fileExists.Returns(true);
@@ -79,6 +81,20 @@ public class MainTests : _TestBase {
         main("--configFile", CONFIG_PATH);
 
         _photoImporter.Verify(x => x.RunJob(config), Times.Once);
+    }
+
+    [TestMethod]
+    public void Main_GoodConfig_ThumbnailJobStarted() {
+        var config = new AppConfig();
+
+        _fileExists.Returns(true);
+        _configIsValid.Returns(true);
+        _appConfig.Returns(config);
+        _makeThumbnails.Verifiable();
+
+        main("--configFile", CONFIG_PATH);
+
+        _thumbnailGenerator.Verify(x => x.MakeThumbnails(config), Times.Once);
     }
 
     void testBadArguments(params string[] args)

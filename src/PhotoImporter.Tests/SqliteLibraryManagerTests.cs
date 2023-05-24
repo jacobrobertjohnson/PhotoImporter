@@ -30,6 +30,11 @@ public class SqliteLibraryManagerTests : _TestBase {
     }
 
     [TestMethod]
+    public void Constructor_ThumbnailColumnAdded() {
+        verifyRunQueryNoOutput("ALTER TABLE Photos ADD COLUMN ThumbnailGenerated INT DEFAULT 0");
+    }
+
+    [TestMethod]
     public void Constructor_AppStateTableCreated() {
         verifyRunQueryNoOutput("CREATE TABLE IF NOT EXISTS AppState (ImportIsRunning INT)");
     }
@@ -100,6 +105,13 @@ public class SqliteLibraryManagerTests : _TestBase {
         _libMan.SetImportRunning(isRunning);
 
         verifyRunQueryNoOutput($"UPDATE AppState SET ImportIsRunning = {isRunning}");
+    }
+
+    [TestMethod]
+    public void GetPhotosWithoutThumbnails_QueryRun() {
+        _libMan.GetPhotosWithoutThumbnails();
+
+        verifyRunQueryNoOutput("SELECT * FROM Photos WHERE ThumbnailGenerated = 0");
     }
 
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);
