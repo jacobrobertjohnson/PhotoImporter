@@ -13,6 +13,7 @@ public class DependencyFactory : IDependencyFactory {
     IPhotoVerifier _photoVerifier = null;
     IThumbnailGenerator _thumbnailGenerator = null;
     IThumbnailCache _thumbnailCache = null;
+    IThumbnailMaker _thumbnailMaker = null;
 
     public IConfigReader GetConfigReader() {
         if (_configReader == null)
@@ -96,5 +97,12 @@ public class DependencyFactory : IDependencyFactory {
             _thumbnailCache = new ThumbnailCache(this);
         
         return _thumbnailCache;
+    }
+
+    public IThumbnailMaker GetThumbnailMaker() {
+        if (_thumbnailMaker == null)
+            _thumbnailMaker = new ThumbnailMaker(this);
+        
+        return _thumbnailMaker;
     }
 }

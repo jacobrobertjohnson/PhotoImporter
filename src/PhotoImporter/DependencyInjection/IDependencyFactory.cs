@@ -13,4 +13,5 @@ public interface IDependencyFactory {
     IPhotoVerifier GetPhotoVerifier();
     IThumbnailGenerator GetThumbnailGenerator();
     IThumbnailCache GetThumbnailCache();
+    IThumbnailMaker GetThumbnailMaker();
 }
