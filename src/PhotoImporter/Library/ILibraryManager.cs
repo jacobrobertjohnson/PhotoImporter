@@ -7,4 +7,5 @@ public interface ILibraryManager {
     bool ImportIsRunning();
     void SetImportRunning(int isRunning);
     IEnumerable<PhotoWithoutThumbnail> GetPhotosWithoutThumbnails();
+    void SetThumbnailGenerated(string fileId);
 }

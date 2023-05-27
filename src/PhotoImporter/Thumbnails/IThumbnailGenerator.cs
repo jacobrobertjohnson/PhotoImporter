@@ -1,6 +1,5 @@
 namespace PhotoImporter.Thumbnails;
 
-public interface IThumbnailGenerator
-{
+public interface IThumbnailGenerator {
     void MakeThumbnails();
 }

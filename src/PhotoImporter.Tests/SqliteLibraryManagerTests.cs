@@ -111,7 +111,14 @@ public class SqliteLibraryManagerTests : _TestBase {
     public void GetPhotosWithoutThumbnails_QueryRun() {
         _libMan.GetPhotosWithoutThumbnails();
 
-        verifyRunQueryNoOutput("SELECT * FROM Photos WHERE ThumbnailGenerated = 0");
+        verifyRunQuery("SELECT FileId, DateTaken, OriginalFilename FROM Photos WHERE ThumbnailGenerated = 0");
+    }
+
+    [TestMethod]
+    public void SetThumbnailGenerated_QueryRun() {
+        _libMan.SetThumbnailGenerated("PhotoId123");
+
+        verifyRunQueryNoOutput("UPDATE Photos SET ThumbnailGenerated = 1 WHERE FileId = 'PhotoId123'");
     }
 
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);

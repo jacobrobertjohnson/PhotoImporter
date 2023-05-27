@@ -12,4 +12,6 @@ public interface IFilesystem {
     DateTime GetFileCreatedDate(string path);
     void CopyFile(string source, string destination, bool overwrite);
     string ReadFile(string path);
+    Stream GetFileStream(string filePath, FileMode fileMode);
+    IImage LoadImage(Stream stream);
 }

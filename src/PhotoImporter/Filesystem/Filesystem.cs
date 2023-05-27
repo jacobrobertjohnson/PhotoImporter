@@ -63,4 +63,8 @@ public class Filesystem : IFilesystem {
     public void CopyFile(string source, string destination, bool overwrite) => File.Copy(source, destination, overwrite);
 
     public string ReadFile(string path) => File.ReadAllText(path);
+
+    public Stream GetFileStream(string filePath, FileMode fileMode) => new FileStream(filePath, fileMode);
+
+    public IImage LoadImage(Stream stream) => new ImageSharpImage(stream);
 }

@@ -57,8 +57,27 @@ public class SqliteLibraryManager : ILibraryManager {
 
     public IEnumerable<PhotoWithoutThumbnail> GetPhotosWithoutThumbnails()
     {
-        _context.RunQuery("SELECT * FROM Photos WHERE ThumbnailGenerated = 0");
+        var photos = new List<PhotoWithoutThumbnail>();
+
+        _context.RunQuery("SELECT FileId, DateTaken, OriginalFilename FROM Photos WHERE ThumbnailGenerated = 0", (reader) => {
+            int fileId = reader.GetOrdinal("FileId"),
+                dateTaken = reader.GetOrdinal("DateTaken"),
+                originalFilename = reader.GetOrdinal("OriginalFilename");
+            
+            string filename = reader.GetString(originalFilename);
+
+            photos.Add(new PhotoWithoutThumbnail() {
+                Id = reader.GetString(fileId),
+                DateTaken = reader.GetDateTime(dateTaken),
+                OriginalFilename = filename,
+                Extension = Path.GetExtension(filename)
+            });
+        });
 
         return null;
+    }
+
+    public void SetThumbnailGenerated(string fileId) {
+        _context.RunQuery($"UPDATE Photos SET ThumbnailGenerated = 1 WHERE FileId = '{fileId}'");
     }
 }

@@ -11,3 +11,5 @@ global using PhotoImporter.Photos;
 global using PhotoImporter.Thumbnails;
 global using System;
 global using System.Collections.Generic;
+global using System.IO;
+global using SixLabors.ImageSharp;
