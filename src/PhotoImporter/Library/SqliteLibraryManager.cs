@@ -74,7 +74,7 @@ public class SqliteLibraryManager : ILibraryManager {
             });
         });
 
-        return null;
+        return photos;
     }
 
     public void SetThumbnailGenerated(string fileId) {
