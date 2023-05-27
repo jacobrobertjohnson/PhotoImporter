@@ -6,4 +6,6 @@ public interface ILibraryManager {
     void DeleteFile(string hash);
     bool ImportIsRunning();
     void SetImportRunning(int isRunning);
+    IEnumerable<PhotoWithoutThumbnail> GetPhotosWithoutThumbnails();
+    void SetThumbnailGenerated(string fileId);
 }

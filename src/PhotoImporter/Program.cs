@@ -15,8 +15,10 @@
 
                 if (!configReader.ConfigIsValid)
                     messenger.ConfigFileNotValid();
-                else
+                else {
                     DependencyFactory.GetPhotoImporter().RunJob(configReader.AppConfig);
+                    DependencyFactory.GetThumbnailGenerator().MakeThumbnails();
+                }
             }
         }
     }

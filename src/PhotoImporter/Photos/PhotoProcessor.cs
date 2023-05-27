@@ -25,6 +25,14 @@ public class PhotoProcessor : IPhotoProcessor {
         }
     }
 
+    public static string MakeFilePath(AppConfig config, string path, DateTime dateTaken, string fileId) {
+        string extension = Path.GetExtension(path),
+            dateFolder = $"{dateTaken:yyyy-MM}",
+            storedFilename = $"{dateTaken:yyyy-MM-dd}_{fileId}{extension}";
+
+        return Path.Combine(config.StoragePath, dateFolder, storedFilename);
+    }
+
     void processFile(string path) {
         string hash = _filesystem.GetFileHash(path);
 
@@ -49,7 +57,7 @@ public class PhotoProcessor : IPhotoProcessor {
     }
 
     void copyFileToStoragePath(string sourcePath, DateTime dateTaken, string fileId) {
-        string targetPath = makeFilePath(sourcePath, dateTaken, fileId);
+        string targetPath = MakeFilePath(_config, sourcePath, dateTaken, fileId);
 
         ensureDirectoryExists(targetPath);
 
@@ -62,14 +70,6 @@ public class PhotoProcessor : IPhotoProcessor {
 
         if (!_filesystem.DirectoryExists(dirPath))
             _filesystem.CreateDirectory(dirPath);
-    }
-
-    string makeFilePath(string path, DateTime dateTaken, string fileId) {
-        string extension = Path.GetExtension(path),
-            dateFolder = $"{dateTaken:yyyy-MM}",
-            storedFilename = $"{dateTaken:yyyy-MM-dd}_{fileId}{extension}";
-
-        return Path.Combine(_config.StoragePath, dateFolder, storedFilename);
     }
 
     void verifyCopyAndDeleteOriginal(string hash, string path)
