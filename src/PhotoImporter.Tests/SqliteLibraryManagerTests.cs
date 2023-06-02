@@ -30,8 +30,18 @@ public class SqliteLibraryManagerTests : _TestBase {
     }
 
     [TestMethod]
+    public void Constructor_DeleteAuditTableCreated() {
+        verifyRunQueryNoOutput("CREATE TABLE IF NOT EXISTS DeleteAudit (DateDeleted TEXT, FileId TEXT, DeletedBy TEXT)");
+    }
+
+    [TestMethod]
     public void Constructor_ThumbnailColumnAdded() {
         verifyRunQueryNoOutput("ALTER TABLE Photos ADD COLUMN ThumbnailGenerated INT DEFAULT 0");
+    }
+
+    [TestMethod]
+    public void Constructor_DeletedColumnAdded() {
+        verifyRunQueryNoOutput("ALTER TABLE Photos ADD COLUMN Deleted INT DEFAULT 0");
     }
 
     [TestMethod]
