@@ -14,10 +14,16 @@ public class SqliteLibraryManager : ILibraryManager {
     void buildDatabaseStructure() {
         _context.RunQuery("CREATE TABLE IF NOT EXISTS Photos (Hash TEXT, FileId TEXT, DateTaken TEXT, OriginalFilename TEXT)");
         _context.RunQuery("CREATE TABLE IF NOT EXISTS AppState (ImportIsRunning INT)");
+        _context.RunQuery("CREATE TABLE IF NOT EXISTS DeleteAudit (DateDeleted TEXT, FileId TEXT, DeletedBy TEXT)");
+
         _context.RunQuery("INSERT INTO AppState (ImportIsRunning) SELECT 0 WHERE NOT EXISTS (SELECT 1 FROM AppState)");
 
         try {
             _context.RunQuery("ALTER TABLE Photos ADD COLUMN ThumbnailGenerated INT DEFAULT 0");
+        } catch { }
+
+        try {
+            _context.RunQuery("ALTER TABLE Photos ADD COLUMN Deleted INT DEFAULT 0");
         } catch { }
     }
 
