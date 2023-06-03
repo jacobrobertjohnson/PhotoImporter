@@ -13,10 +13,14 @@ public class ExifModelSetter : IExifModelSetter {
 
     public void SetModel() {
         foreach (var image in _libraryManager.GetImagesWithoutExifModel()) {
-            string imagePath = makeImagePath(image),
-                exifModel = _filesystem.GetExifModel(imagePath);
+            try {
+                string imagePath = makeImagePath(image),
+                    exifModel = _filesystem.GetExifModel(imagePath);
 
-            _libraryManager.SetExifModel(image.Id, exifModel);
+                _libraryManager.SetExifModel(image.Id, exifModel);
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
         }
     }
 
