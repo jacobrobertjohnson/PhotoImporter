@@ -140,7 +140,7 @@ public class SqliteLibraryManagerTests : _TestBase {
     public void GetImagesWithoutExifModel_QueryRun() {
         _libMan.GetImagesWithoutExifModel();
 
-        verifyRunQuery("SELECT FileId, DateTaken FROM Photos WHERE ExifModel IS NULL");
+        verifyRunQuery("SELECT FileId, DateTaken, OriginalFilename FROM Photos WHERE ExifModel IS NULL");
     }
 
     [TestMethod]

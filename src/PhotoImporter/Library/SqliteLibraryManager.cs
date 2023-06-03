@@ -94,7 +94,7 @@ public class SqliteLibraryManager : ILibraryManager {
     public List<PhotoWithoutThumbnail> GetImagesWithoutExifModel() {
         var photos = new List<PhotoWithoutThumbnail>();
 
-        _context.RunQuery("SELECT FileId, DateTaken FROM Photos WHERE ExifModel IS NULL", reader => {
+        _context.RunQuery("SELECT FileId, DateTaken, OriginalFilename FROM Photos WHERE ExifModel IS NULL", reader => {
             int fileId = reader.GetOrdinal("FileId"),
                 dateTaken = reader.GetOrdinal("DateTaken"),
                 originalFilename = reader.GetOrdinal("OriginalFilename");
