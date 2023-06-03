@@ -10,6 +10,7 @@ public interface IFilesystem {
     string GetFileHash(string path);
     DateTime? GetImageTakenDate(string path);
     DateTime GetFileCreatedDate(string path);
+    string GetExifModel(string path);
     void CopyFile(string source, string destination, bool overwrite);
     string ReadFile(string path);
     Stream GetFileStream(string filePath, FileMode fileMode);

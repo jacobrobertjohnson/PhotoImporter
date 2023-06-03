@@ -1,3 +1,5 @@
+using PhotoImporter.ExifData;
+
 namespace PhotoImporter.Tests;
 
 public abstract class _TestBase {
@@ -12,6 +14,7 @@ public abstract class _TestBase {
     protected Mock<IValueProvider> _valueProvider;
     protected Mock<IPhotoVerifier> _photoVerifier;
     protected Mock<IThumbnailGenerator> _thumbnailGenerator;
+    protected Mock<IExifModelSetter> _exifModel;
     protected Mock<IThumbnailCache> _thumbnailCache;
     protected Mock<IThumbnailMaker> _thumbnailMaker;
 
@@ -36,6 +39,7 @@ public abstract class _TestBase {
         _thumbnailGenerator = new Mock<IThumbnailGenerator>();
         _thumbnailCache = new Mock<IThumbnailCache>();
         _thumbnailMaker = new Mock<IThumbnailMaker>();
+        _exifModel = new Mock<IExifModelSetter>();
 
         _dependencies = new Mock<IDependencyFactory>();
         _dependencies.Setup(x => x.GetConsoleWriter()).Returns(_consoleWriter.Object);
@@ -51,6 +55,7 @@ public abstract class _TestBase {
         _dependencies.Setup(x => x.GetThumbnailGenerator()).Returns(_thumbnailGenerator.Object);
         _dependencies.Setup(x => x.GetThumbnailCache()).Returns(_thumbnailCache.Object);
         _dependencies.Setup(x => x.GetThumbnailMaker()).Returns(_thumbnailMaker.Object);
+        _dependencies.Setup(x => x.GetExifModelSetter()).Returns(_exifModel.Object);
 
         _writeLine = _consoleWriter.Setup(x => x.WriteLine(It.IsAny<string>()));
         _writeLineResults = new List<string>();

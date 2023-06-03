@@ -1,3 +1,5 @@
+using PhotoImporter.ExifData;
+
 namespace PhotoImporter.Tests;
 
 [TestClass]
@@ -10,6 +12,7 @@ public class MainTests : _TestBase {
     ISetup<IFilesystem, bool> _fileExists;
     ISetup<IPhotoImporter> _runJob;
     ISetup<IThumbnailGenerator> _makeThumbnails;
+    ISetup<IExifModelSetter> _setExifModel;
 
     [TestInitialize]
     public void Setup() {  
@@ -21,6 +24,7 @@ public class MainTests : _TestBase {
 
         _runJob = _photoImporter.Setup(x => x.RunJob(It.IsAny<AppConfig>()));
         _makeThumbnails = _thumbnailGenerator.Setup(x => x.MakeThumbnails());
+        _setExifModel = _exifModel.Setup(x => x.SetModel());
 
         Program.DependencyFactory = _dependencies.Object;
     }
@@ -92,6 +96,17 @@ public class MainTests : _TestBase {
         main("--configFile", CONFIG_PATH);
 
         _thumbnailGenerator.Verify(x => x.MakeThumbnails(), Times.Once);
+    }
+
+    [TestMethod]
+    public void Main_GoodConfig_ExifModelJobStarted() {
+        _fileExists.Returns(true);
+        _configIsValid.Returns(true);
+        _setExifModel.Verifiable();
+
+        main("--configFile", CONFIG_PATH);
+
+        _exifModel.Verify(x => x.SetModel(), Times.Once);
     }
 
     void testBadArguments(params string[] args)

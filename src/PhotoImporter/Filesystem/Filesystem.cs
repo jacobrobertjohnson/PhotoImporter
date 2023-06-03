@@ -58,6 +58,20 @@ public class Filesystem : IFilesystem {
         return result;
     }
 
+    public string GetExifModel(string path) {
+        IExifValue<string> rawModel = null;
+        string model = "UNKNOWN";
+
+        using (var image = Image.Load(path)) {
+            image?.Metadata?.ExifProfile?.TryGetValue(ExifTag.Model, out rawModel);
+        }
+
+        if (rawModel != null)
+            model = rawModel.Value;
+
+        return model;
+    }
+
     public DateTime GetFileCreatedDate(string path) => File.GetCreationTime(path);
 
     public void CopyFile(string source, string destination, bool overwrite) => File.Copy(source, destination, overwrite);

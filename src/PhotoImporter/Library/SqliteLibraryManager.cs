@@ -25,6 +25,10 @@ public class SqliteLibraryManager : ILibraryManager {
         try {
             _context.RunQuery("ALTER TABLE Photos ADD COLUMN Deleted INT DEFAULT 0");
         } catch { }
+
+        try {
+            _context.RunQuery("ALTER TABLE Photos ADD COLUMN ExifModel TEXT DEFAULT NULL");
+        } catch { }
     }
 
     public bool FileAlreadyAdded(string hash) {
@@ -85,5 +89,30 @@ public class SqliteLibraryManager : ILibraryManager {
 
     public void SetThumbnailGenerated(string fileId) {
         _context.RunQuery($"UPDATE Photos SET ThumbnailGenerated = 1 WHERE FileId = '{fileId}'");
+    }
+
+    public List<PhotoWithoutThumbnail> GetImagesWithoutExifModel() {
+        var photos = new List<PhotoWithoutThumbnail>();
+
+        _context.RunQuery("SELECT FileId, DateTaken FROM Photos WHERE ExifModel IS NULL", reader => {
+            int fileId = reader.GetOrdinal("FileId"),
+                dateTaken = reader.GetOrdinal("DateTaken"),
+                originalFilename = reader.GetOrdinal("OriginalFilename");
+            
+            string filename = reader.GetString(originalFilename);
+
+            photos.Add(new PhotoWithoutThumbnail() {
+                Id = reader.GetString(fileId),
+                DateTaken = reader.GetDateTime(dateTaken),
+                OriginalFilename = filename,
+                Extension = Path.GetExtension(filename)
+            });
+        });
+
+        return photos;
+    }
+
+    public void SetExifModel(string fileId, string exifModel) {
+        _context.RunQuery($"UPDATE Photos SET ExifModel = '{exifModel}' WHERE FileId = '{fileId}'");
     }
 }

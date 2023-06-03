@@ -1,3 +1,5 @@
+using PhotoImporter.ExifData;
+
 namespace PhotoImporter.DependencyInjection;
 
 public class DependencyFactory : IDependencyFactory {
@@ -14,6 +16,7 @@ public class DependencyFactory : IDependencyFactory {
     IThumbnailGenerator _thumbnailGenerator = null;
     IThumbnailCache _thumbnailCache = null;
     IThumbnailMaker _thumbnailMaker = null;
+    IExifModelSetter _exifModel = null;
 
     public IConfigReader GetConfigReader() {
         if (_configReader == null)
@@ -104,5 +107,12 @@ public class DependencyFactory : IDependencyFactory {
             _thumbnailMaker = new ThumbnailMaker(this);
         
         return _thumbnailMaker;
+    }
+
+    public IExifModelSetter GetExifModelSetter() {
+        if (_exifModel == null)
+            _exifModel = new ExifModelSetter(this);
+        
+        return _exifModel;
     }
 }

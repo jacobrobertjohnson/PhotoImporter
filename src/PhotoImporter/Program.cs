@@ -18,6 +18,7 @@
                 else {
                     DependencyFactory.GetPhotoImporter().RunJob(configReader.AppConfig);
                     DependencyFactory.GetThumbnailGenerator().MakeThumbnails();
+                    DependencyFactory.GetExifModelSetter().SetModel();
                 }
             }
         }

@@ -45,6 +45,11 @@ public class SqliteLibraryManagerTests : _TestBase {
     }
 
     [TestMethod]
+    public void Constructor_ExifModelColumnAdded() {
+        verifyRunQueryNoOutput("ALTER TABLE Photos ADD COLUMN ExifModel TEXT DEFAULT NULL");
+    }
+
+    [TestMethod]
     public void Constructor_AppStateTableCreated() {
         verifyRunQueryNoOutput("CREATE TABLE IF NOT EXISTS AppState (ImportIsRunning INT)");
     }
@@ -129,6 +134,20 @@ public class SqliteLibraryManagerTests : _TestBase {
         _libMan.SetThumbnailGenerated("PhotoId123");
 
         verifyRunQueryNoOutput("UPDATE Photos SET ThumbnailGenerated = 1 WHERE FileId = 'PhotoId123'");
+    }
+
+    [TestMethod]
+    public void GetImagesWithoutExifModel_QueryRun() {
+        _libMan.GetImagesWithoutExifModel();
+
+        verifyRunQuery("SELECT FileId, DateTaken FROM Photos WHERE ExifModel IS NULL");
+    }
+
+    [TestMethod]
+    public void SetExifModel_QueryRun() {
+        _libMan.SetExifModel("PhotoId123", "ExifModel123");
+
+        verifyRunQueryNoOutput("UPDATE Photos SET ExifModel = 'ExifModel123' WHERE FileId = 'PhotoId123'");
     }
 
     void verifyRunQuery(string query) => _sqliteContext.Verify(x => x.RunQuery(query, It.IsAny<Action<SqliteDataReader>>()), Times.Once);

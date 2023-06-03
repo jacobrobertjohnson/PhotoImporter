@@ -8,4 +8,7 @@ public interface ILibraryManager {
     void SetImportRunning(int isRunning);
     IEnumerable<PhotoWithoutThumbnail> GetPhotosWithoutThumbnails();
     void SetThumbnailGenerated(string fileId);
+
+    List<PhotoWithoutThumbnail> GetImagesWithoutExifModel();
+    void SetExifModel(string fileId, string exifModel);
 }

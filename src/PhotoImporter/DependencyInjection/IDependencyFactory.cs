@@ -1,3 +1,5 @@
+using PhotoImporter.ExifData;
+
 namespace PhotoImporter.DependencyInjection;
 
 public interface IDependencyFactory {
@@ -14,4 +16,5 @@ public interface IDependencyFactory {
     IThumbnailGenerator GetThumbnailGenerator();
     IThumbnailCache GetThumbnailCache();
     IThumbnailMaker GetThumbnailMaker();
+    IExifModelSetter GetExifModelSetter();
 }
