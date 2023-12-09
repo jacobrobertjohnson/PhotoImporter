@@ -2,19 +2,19 @@ namespace PhotoImporter.Tests;
 
 [TestClass]
 public class PhotoProcessorTests : _TestBase {
-    const string ORIGINAL_FILENAME = "file.jpg",
-        SOURCE_PATH = "/fakepath/source",
-        DIRECTORY_PATH = SOURCE_PATH + "/subdir1",
-        FILE_PATH = DIRECTORY_PATH + "/" + ORIGINAL_FILENAME,
+    static readonly string ORIGINAL_FILENAME = "file.jpg",
+        SOURCE_PATH = Path.Combine("fakepath", "source"),
+        DIRECTORY_PATH = Path.Combine(SOURCE_PATH, "subdir1"),
+        FILE_PATH = Path.Combine(DIRECTORY_PATH, ORIGINAL_FILENAME),
         RANDOM_GUID = "RandomGuid123",
-        STORAGE_PATH = "/fakepath/dest/",
+        STORAGE_PATH = Path.Combine("fakepath", "dest"),
         FILE_HASH = "The MD5 Hash";
 
 
     static readonly DateTime ORIGINAL_DATE = DateTime.Parse("2023-01-01"),
         CREATED_DATE = DateTime.Parse("2023-02-02");
 
-    static readonly string DESTINATION_PATH = $"{STORAGE_PATH}{ORIGINAL_DATE:yyyy-MM}/{ORIGINAL_DATE:yyyy-MM-dd}_{RANDOM_GUID}.jpg";
+    static readonly string DESTINATION_PATH = Path.Combine($"{STORAGE_PATH}", $"{ORIGINAL_DATE:yyyy-MM}", $"{ORIGINAL_DATE:yyyy-MM-dd}_{RANDOM_GUID}.jpg");
 
     ISetup<ILibraryManager, bool> _fileAlreadyAdded;
     ISetup<ILibraryManager> _addFile;
@@ -168,7 +168,7 @@ public class PhotoProcessorTests : _TestBase {
 
         processFile();
 
-        _filesystem.Verify(x => x.CreateDirectory($"{STORAGE_PATH}{ORIGINAL_DATE:yyyy-MM}"), Times.Once);
+        _filesystem.Verify(x => x.CreateDirectory(Path.Combine($"{STORAGE_PATH}", $"{ORIGINAL_DATE:yyyy-MM}")), Times.Once);
     }
 
     [TestMethod]
@@ -263,7 +263,7 @@ public class PhotoProcessorTests : _TestBase {
         _getFiles.Returns(new string[0]);
         _deleteDirectory.Verifiable();
 
-        processFile(SOURCE_PATH + "/" + ORIGINAL_FILENAME);
+        processFile(Path.Combine(SOURCE_PATH, ORIGINAL_FILENAME));
 
         _filesystem.Verify(x => x.DeleteDirectory(SOURCE_PATH), Times.Never);
     }
