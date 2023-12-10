@@ -12,20 +12,16 @@ public class ExifModelSetter : IExifModelSetter {
     }
 
     public void SetModel() {
-        Parallel.ForEach(_libraryManager.GetImagesWithoutExifModel(), image =>
-        {
-            try
-            {
+        foreach (var image in _libraryManager.GetImagesWithoutExifModel()) {
+            try {
                 string imagePath = makeImagePath(image),
                     exifModel = _filesystem.GetExifModel(imagePath);
 
                 _libraryManager.SetExifModel(image.Id, exifModel);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Console.WriteLine(e.ToString());
             }
-        });
+        }
     }
 
     string makeImagePath(PhotoWithoutThumbnail photo) {

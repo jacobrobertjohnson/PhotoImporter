@@ -17,8 +17,10 @@ public class ThumbnailCache : IThumbnailCache {
         _config = dependencyFactory.GetConfigReader().AppConfig;
     }
 
-    public void CacheThumbnails(PhotoWithoutThumbnail photo)
-        => Parallel.ForEach(THUMBNAIL_SIZES, size => cacheThumbnailIfNotExisting(photo, size));
+    public void CacheThumbnails(PhotoWithoutThumbnail photo) {
+        foreach (int size in THUMBNAIL_SIZES)
+            cacheThumbnailIfNotExisting(photo, size);
+    }
 
     void cacheThumbnailIfNotExisting(PhotoWithoutThumbnail photo, int size) {
         string thumbnailPath = makeThumbnailPath(photo, size),

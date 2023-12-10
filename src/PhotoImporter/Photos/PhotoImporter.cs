@@ -34,6 +34,7 @@ public class PhotoImporter : IPhotoImporter {
 
         _messenger.FilesWereFound(config, files);
 
-        Parallel.ForEach(files, file => _photoProcessor.ProcessFile(file));
+        foreach (string file in files)
+            _photoProcessor.ProcessFile(file);
     }
 }

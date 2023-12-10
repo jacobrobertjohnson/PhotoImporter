@@ -13,18 +13,14 @@ namespace PhotoImporter.Thumbnails
         
 
         public void MakeThumbnails() {
-            Parallel.ForEach(_libraryManager.GetPhotosWithoutThumbnails(), photo =>
-            {
-                try
-                {
+            foreach (var photo in _libraryManager.GetPhotosWithoutThumbnails()) {
+                try {
                     _thumbnailCache.CacheThumbnails(photo);
                     _libraryManager.SetThumbnailGenerated(photo.Id);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     _messenger.ExceptionOccurredInThumbnailGeneration(photo.Id, e);
                 }
-            });
+            }
         }
     }
 }
