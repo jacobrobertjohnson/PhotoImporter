@@ -1,9 +1,11 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 
 namespace PhotoImporter.Filesystem;
 
 public class Filesystem : IFilesystem {
+    private readonly CultureInfo _enUs = new CultureInfo("en-US");
     public bool FileExists(string path) => File.Exists(path);
 
     public void DeleteFile(string path) => File.Delete(path);
@@ -53,6 +55,8 @@ public class Filesystem : IFilesystem {
 
         if (rawExifDate != null)
             if (DateTime.TryParse(rawExifDate.Value, out parsedDate))
+                result = parsedDate;
+            else if (DateTime.TryParseExact(rawExifDate.Value, "yyyy:MM:dd hh:mm:ss", _enUs, DateTimeStyles.None, out parsedDate))
                 result = parsedDate;
 
         return result;
